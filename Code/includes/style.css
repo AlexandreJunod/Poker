@@ -1,8 +1,24 @@
 /********** Div pour les formulaires, page : index.php et newaccount.php **********/
 
-/* Englobe les autres div et les place au millieu de la page */
-.FormContainer{ 
-    width: 500px;
+/* Englobe les autres div et les place au millieu de la page index.php */
+.FormContainerIndex{ 
+    width: 400px;
+    height: 400px;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 18px;
+    
+    /* Centrer la div au millieu de la page */
+    position:absolute;
+    top:0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    margin: auto;
+}
+
+/* Englobe les autres div et les place au millieu de la page inscription.php */
+.FormContainerInscription{ 
+    width: 700px;
     height: 400px;
     font-family: Arial, Helvetica, sans-serif;
     font-size: 18px;
@@ -38,15 +54,40 @@
     height:75%;    
 }
 
-/* Contient les champs d'identification */
-.FormFields{
+/* Contient les champs d'identification de la page index.php */
+.FormFieldsIndex{
     text-align: left;
     
     display: block;
     width:70%;
-    height:55%;
+    height:60%;
     margin: auto;
     padding-top: 15%;
+}
+
+/* Contient les champs d'identification de la page inscription.php */
+.FormFieldsInscription{
+    text-align: left;
+    
+    display: block;
+    width:42.5%;
+    height:61.2%;
+    margin-left: 5.5%;
+    padding-top: 8%;
+    float: left;
+}
+
+/* Contient les contraintes de création de compte, page inscription.php */
+.FormContraintesInscription{
+    text-align: left;
+    color: red;
+    
+    display: block;
+    width:42.5%;
+    height:61.2%;
+    margin-left: 7.5%;
+    padding-top: 8%;
+    float: right;
 }
 
 /* Contient le bouton */
@@ -55,8 +96,9 @@
     
     display: block;
     width:100%;
-    height:20%;    
+    height:10%;    
     margin: auto;
+    clear: left;
 }
 
 /* Contient le lien d'inscription */
@@ -66,11 +108,34 @@
     display: block;
     width:100%;
     height:10%;
-    padding-top: 10%;
+    padding-top: 30px;
 }
+
+/* Contient les champ de texte pour le formulaire de la page index.php*/
+#InputIndex{
+    width:100%;
+    font-size: 16px;    
+}
+
+/* Contient les champ de texte pour le formulaire de la page inscription.php*/
+#InputInscription{
+    width:90%;
+    font-size: 16px;  
+    float: left;
+}
+
 
 /********** Mise en forme pour les messages d'erreurs **********/
 
 .ErrorMsg{
     position: sticky;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 25px;
+    color: red;
+    
+    /* Centrer la div verticallement au millieu, 20 pixels plus bas que le haut de la page */
+    position:absolute;
+    width: 99%;
+    padding-top: 20px;
+    text-align: center;
 }
