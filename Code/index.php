@@ -19,8 +19,11 @@ if(isset($_POST['PseudoForm'])) //Données reçues par le formulaire rempli par 
     $MotDePasse = $_POST['MotDePasseForm']; // Contient le mot de passe rentré par l'utilisateur
     
     //Récupére le mot de passe haché pour le pseudo selectionné.
-    $query = "SELECT idJoueur, PseudoJoueur, MotDePasseJoueur, PASSWORD('$MotDePasse') as HashPassword FROM poker.joueurs WHERE PseudoJoueur = '$Pseudo'";
+    $query = "SELECT idJoueur, PseudoJoueur, MotDePasseJoueur, PASSWORD('$MotDePasse') as HashPassword FROM poker.joueur WHERE PseudoJoueur = '$Pseudo'";
     $connexions = $dbh->query($query) or die ("SQL Error in:<br> $query <br>Error message:".$dbh->errorInfo()[2]);
+    
+    //Remplis les fk de la table joueur, afin de savoir quel est l'état du joueur et la page dans la quelle il se trouve
+    $query2 = "UPDATE poker.joueur SET fkEtatJoueur='1', fkPageJoueur='2' WHERE PseudoJoueur = '$Pseudo'";
 
     if($connexions->rowCount() > 0) //Compte le nombre de colonnes reçues
     {
@@ -29,6 +32,7 @@ if(isset($_POST['PseudoForm'])) //Données reçues par le formulaire rempli par 
         
         if($MotDePasseJoueur == $HashPassword) //Compare le mot de passe haché dans le base de donnée avec le mot de passe haché que l'utilisateur a entré
         {
+            $dbh->query($query2) or die ("SQL Error in:<br> $query2 <br>Error message:".$dbh->errorInfo()[2]);
             $_SESSION['Pseudo'] = $Pseudo;
             header('Location: table.php');
         }        
@@ -57,7 +61,7 @@ if(isset($_POST['PseudoForm'])) //Données reçues par le formulaire rempli par 
     </head>
     <body>
         <div class="FormContainerIndex">
-            <div class="FormTitle">Poker online</div>
+            <div class="FormTitle">Connexion</div>
             <div class="FormDesign">
                 <div class="FormFieldsIndex"><form method="post" id="FormConnexion">Pseudo<input type="text" id="InputIndex" name="PseudoForm" minlength="6" maxlength="13" required autofocus><br><br><br>Mot de passe<input type="password" id="InputIndex" name="MotDePasseForm" minlength="6" required></form><br></div>
                 <div class="FormButton"><button type="submit" form="FormConnexion" name="Connexion">Connexion</button></div>
