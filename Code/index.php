@@ -24,6 +24,8 @@ if(isset($_POST['PseudoForm'])) //Données reçues par le formulaire rempli par 
     
     //Remplis les fk de la table joueur, afin de savoir quel est l'état du joueur et la page dans la quelle il se trouve
     $query2 = "UPDATE poker.joueur SET fkEtatJoueur='1', fkPageJoueur='2' WHERE PseudoJoueur = '$Pseudo'";
+    
+    $query2 =
 
     if($connexions->rowCount() > 0) //Compte le nombre de colonnes reçues
     {
