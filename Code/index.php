@@ -21,20 +21,14 @@ if(isset($_POST['PseudoForm'])) //Données reçues par le formulaire rempli par 
     //Récupére le mot de passe haché pour le pseudo selectionné.
     $query = "SELECT idJoueur, PseudoJoueur, MotDePasseJoueur, PASSWORD('$MotDePasse') as HashPassword FROM poker.joueur WHERE PseudoJoueur = '$Pseudo'";
     $connexions = $dbh->query($query) or die ("SQL Error in:<br> $query <br>Error message:".$dbh->errorInfo()[2]);
-    
-    //Remplis les fk de la table joueur, afin de savoir quel est l'état du joueur et la page dans la quelle il se trouve
-    $query2 = "UPDATE poker.joueur SET fkEtatJoueur='1', fkPageJoueur='2' WHERE PseudoJoueur = '$Pseudo'";
-    
-    $query2 =
-
-    if($connexions->rowCount() > 0) //Compte le nombre de colonnes reçues
+        
+    if($connexions->rowCount() > 0) //S'assure que le pseudo existe
     {
         $connexion = $connexions->fetch(); //fetch -> aller chercher
         extract($connexion); //$idJoueurs, $PseudoJoueurs, $MotDePasse, $HashPassword
         
         if($MotDePasseJoueur == $HashPassword) //Compare le mot de passe haché dans le base de donnée avec le mot de passe haché que l'utilisateur a entré
         {
-            $dbh->query($query2) or die ("SQL Error in:<br> $query2 <br>Error message:".$dbh->errorInfo()[2]);
             $_SESSION['Pseudo'] = $Pseudo;
             header('Location: table.php');
         }        
@@ -42,8 +36,8 @@ if(isset($_POST['PseudoForm'])) //Données reçues par le formulaire rempli par 
         {
             echo "<div class='ErrorMsg'>Le mot de passe est erroné</div>";
         }
-    } //Si aucune colonne n'est trouvée, le pseudo est faux 
-    else
+    } 
+    else //Le pseudo n'a pas été trouver
     {
         echo "<div class='ErrorMsg'>Le pseudo est erroné</div>";
     }
