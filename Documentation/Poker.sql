@@ -33,6 +33,7 @@ CREATE TABLE IF NOT EXISTS Poker.Siege (
   INDEX fk_Siege_Partie1_idx (fkPartieSiege ASC),
   INDEX fk_Siege_Etat1_idx (fkEtatSiege ASC),
   INDEX fk_Siege_Joueur1_idx (fkJoueurSiege ASC),
+  UNIQUE INDEX fkJoueurSiege_UNIQUE (fkJoueurSiege ASC),
   CONSTRAINT fk_Siege_Partie1
     FOREIGN KEY (fkPartieSiege)
     REFERENCES Poker.Partie (idPartie)
@@ -81,9 +82,8 @@ SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
 
 INSERT INTO poker.partie (PotPartie, BlindPartie) VALUES ('0', '3000');
-INSERT INTO poker.etat (DescriptionEtat) VALUES ('Sans joueur');
 INSERT INTO poker.etat (DescriptionEtat) VALUES ('En attente');
-INSERT INTO poker.etat (DescriptionEtat) VALUES ('Table pleine');
+INSERT INTO poker.etat (DescriptionEtat) VALUES ('Joue');
 INSERT INTO poker.siege (fkPartieSiege, fkEtatSiege) VALUES ('1', '1');
 INSERT INTO poker.siege (fkPartieSiege, fkEtatSiege) VALUES ('1', '1');
 INSERT INTO poker.siege (fkPartieSiege, fkEtatSiege) VALUES ('1', '1');

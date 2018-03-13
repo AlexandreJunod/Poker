@@ -139,3 +139,38 @@
     padding-top: 20px;
     text-align: center;
 }
+
+/********** Div pour toutes les pages **********/
+
+body{
+    background-size: cover;
+}
+
+/********** Div pour la page : accueil.php **********/
+
+.ContainerAccueil{ 
+    width: 123px;
+    height: 50px;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 18px;
+    
+    /* Centrer la div au millieu de la page */
+    position:absolute;
+    top:0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    margin: auto;
+}
+
+/* Contient le pseudo du joueur et le bouton de déconnexion, dans la page : accueil.php*/
+/* Contient le pseudo du joueur, l'argent du joueur et le bouton se lever, dans la page : table.php*/
+.InfosJoueur{
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 18px;
+    color: white;
+    
+    width: 250px;
+    height: 200px;
+    float:right;
+}

@@ -17,32 +17,50 @@ if(isset($_SESSION['Pseudo']))
 {
     $Pseudo = $_SESSION['Pseudo'];
     
+    //Recherche l'argent que le joueur possède, et son id
+    $query = "SELECT idSiege, ArgentSiege FROM poker.joueur INNER JOIN poker.siege ON joueur.idJoueur=siege.fkJoueurSiege WHERE fkJoueurSiege=(SELECT idJoueur FROM poker.joueur WHERE PseudoJoueur='$Pseudo')";
+    $Jetons = $dbh->query($query) or die ("SQL Error in:<br> $query <br>Error message:".$dbh->errorInfo()[2]);
+    
     //Regarde s'il reste un siège disponible.
     $query = "SELECT idSiege FROM poker.siege WHERE fkJoueurSiege IS NULL ORDER BY fkJoueurSiege ASC LIMIT 1";
     $CheckSieges = $dbh->query($query) or die ("SQL Error in:<br> $query <br>Error message:".$dbh->errorInfo()[2]);
-    
-    //Le joueur quitte la table
-    //UPDATE poker.siege SET fkJoueurSiege=NULL WHERE idSiege='1';
-    
-    if($CheckSieges->rowCount() > 0) // S'assure qu'un siège a été trouvé
-    {
-        $CheckSiege = $CheckSieges->fetch(); //fetch -> aller chercher
-        extract($CheckSiege); //$idSiege
         
-        //Attribue un siège a un joueur
-        $query2 = "UPDATE poker.siege SET fkJoueurSiege=(SELECT idJoueur FROM poker.joueur WHERE PseudoJoueur='$Pseudo') WHERE idSiege='$idSiege';";
-        $dbh->query($query2) or die ("SQL Error in:<br> $query2 <br>Error message:".$dbh->errorInfo()[2]);
-    } 
-    else // Aucun siège trouvé, le renvoye a la page d'accueil avec un message d'erreur
+    if($Jetons->rowCount() > 0) //Recherche l'argent du joueur
     {
-        $_SESSION['TablePleine'] = '1';
-        header('Location: accueil.php');
+        $Jeton = $Jetons->fetch(); //fetch -> aller chercher
+        extract($Jeton); //$idSiege, $ArgentSiege
+        $ArgentSiege = number_format ($ArgentSiege, $decimals = 0 ,$dec_point = "." , $thousands_sep = "'" );
     }
-    
+    else //Si l'id et l'argent n'as pas été trouver, l'utilisateur n'est pas encore sur une chaise
+    {
+        if($CheckSieges->rowCount() > 0) // S'assure qu'un siège a été trouvé
+        {
+            $CheckSiege = $CheckSieges->fetch(); //fetch -> aller chercher
+            extract($CheckSiege); //$idSiege
+
+            //Attribue un siège a un joueur et lui donne 150'000$
+            $query = "UPDATE poker.siege SET ArgentSiege='150000', fkJoueurSiege=(SELECT idJoueur FROM poker.joueur WHERE PseudoJoueur='$Pseudo') WHERE idSiege='$idSiege'";
+            $dbh->query($query) or die ("SQL Error in:<br> $query <br>Error message:".$dbh->errorInfo()[2]);
+            header('Location: table.php'); //Refresh la page, afin de pouvoir afficher la somme que le joueur possède
+        } 
+        else // Aucun siège trouvé, le renvoye a la page d'accueil avec un message d'erreur
+        {
+            $_SESSION['TablePleine'] = '1';
+            header('Location: accueil.php');
+        }
+    }
 }
 
 //----------------------------- Traitement POST ------------------------------------------
 
+// Remet la chaise dans son état initial, et renvoie le joueur a la page d'accueil 
+if(isset($_POST['SeLever']))
+{
+    //Le joueur quitte la table
+    $query = "UPDATE poker.siege SET ArgentSiege=NULL, MainSiege=NULL, fkJoueurSiege=NULL WHERE idSiege='$idSiege'";
+    $dbh->query($query) or die ("SQL Error in:<br> $query <br>Error message:".$dbh->errorInfo()[2]);
+    header('Location: accueil.php');
+}
 
 //----------------------------- Traitement GET -------------------------------------------
 
@@ -58,8 +76,11 @@ if(isset($_SESSION['Pseudo']))
         <link rel="stylesheet" href="includes/style.css"/>
         <title><?php echo $TitleTab; ?></title>
     </head>
-    <body>
-        Hello world, there is your table
+    <body background="includes\images\TablePoker.jpg">
+        <div class="InfosJoueur"><?php echo "$Pseudo<br>$ArgentSiege$"; ?>
+            <form method="post" id="SeLeverForm"></form>
+            <button type="submit" form="SeLeverForm" name="SeLever">Se lever</button>
+        </div>
     </body>
 </html>
 

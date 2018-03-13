@@ -25,6 +25,16 @@ if(isset($_SESSION['TablePleine'])) //Message d'erreur, s'il a rejoint la table 
 
 //----------------------------- Traitement POST ------------------------------------------
 
+if(isset($_POST['RejoindreTable']))
+{
+    header('Location: table.php');
+}
+
+if(isset($_POST['Deconnexion']))
+{
+    unset($_SESSION);
+    header('Location: index.php');
+}
 
 //----------------------------- Traitement GET -------------------------------------------
 
@@ -40,8 +50,13 @@ if(isset($_SESSION['TablePleine'])) //Message d'erreur, s'il a rejoint la table 
         <link rel="stylesheet" href="includes/style.css"/>
         <title><?php echo $TitleTab; ?></title>
     </head>
-    <body>
-        Hello world, there is the lobby
+    <body background="includes\images\TablePoker.jpg">
+        <div class="InfosJoueur"><?php echo $Pseudo; ?>
+            <form method="post" id="DeconnexionForm"></form>
+            <button type="submit" form="DeconnexionForm" name="Deconnexion">Déconnexion</button>
+        </div>
+        <form method="post" id="RejoindreTableForm"></form>
+        <div class="ContainerAccueil"><button type="submit" form="RejoindreTableForm" name="RejoindreTable">Rejoindre la table</button></div>
     </body>
 </html>
 
@@ -49,4 +64,5 @@ if(isset($_SESSION['TablePleine'])) //Message d'erreur, s'il a rejoint la table 
 //----------------------------- Sauvegarde de SESSION ------------------------------------
 
 $_SESSION['Pseudo'] = $Pseudo;
+unset($_SESSION['TablePleine']);
 ?>

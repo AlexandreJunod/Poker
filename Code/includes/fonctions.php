@@ -1,8 +1,6 @@
 <meta charset='utf-8'/>
 
 <?php
-@session_start();
-
 //Création d'une variable supergloable qui permet de changer le titre de l'onglet
 $GLOBALS['TitleTab'] = 'Poker online';
 

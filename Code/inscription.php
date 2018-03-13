@@ -19,6 +19,7 @@ ConnectDB();
 
 if(isset($_POST['PseudoForm']))
 {
+    echo "1";
     $Pseudo = $_POST['PseudoForm'];
     $MotDePasse = $_POST['MotDePasseForm'];
     
@@ -63,12 +64,11 @@ if(isset($_POST['PseudoForm']))
         <title><?php echo $TitleTab; ?></title>
     </head>
     <body>
-        
         <div class="FormContainerInscription">
             <div class="FormTitle">Inscription</div>
             <div class="FormDesign">
                 <div class="FormFieldsInscription"><form method="post" id="FormInscription">Pseudo<input type="text" id="InputInscription" name="PseudoForm" minlength="6" maxlength="13" required autofocus><br><br><br>Mot de passe<input type="password" id="InputInscription" name="MotDePasseForm" minlength="6" required></form><br></div>
-                <div class="FormContraintesInscription"><br>Doit contenir 6 caractères ou +<br><br><br> Doit contenir :<br>&nbsp;&nbsp;- 6 caractères ou +<br>&nbsp;&nbsp;- 1 caractère spécial</div>
+                <div class="FormContraintesInscription"><br>Doit contenir 6 à 14 caractères<br><br><br> Doit contenir :<br>&nbsp;&nbsp;- 6 caractères ou +<br>&nbsp;&nbsp;- 1 caractère spécial</div>
                 <div class="FormButton"><button type="submit" form="FormInscription" name="Inscription">Inscription</button></div>
             </div>
             <div class="FormLink"><a href="index.php">Déjà un compte ? Connectez-vous !</a></div>
