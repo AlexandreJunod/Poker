@@ -174,3 +174,113 @@ body{
     height: 200px;
     float:right;
 }
+
+/********** Div pour la page : table.php **********/
+
+/* Place du joueur numéro 1 */
+.Joueur1{ 
+    width: 150px;
+    height: 150px;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 18px;
+    background-color: black;
+    color: white;
+    
+    /* Centrer la div au millieu de la page */
+    position:absolute;
+    top: 550;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    margin: auto
+}
+
+/* Place du joueur numéro 2 */
+.Joueur2{ 
+    width: 150px;
+    height: 150px;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 18px;
+    background-color: black;
+    color: white;
+    
+    /* Centrer la div au millieu de la page */
+    position:absolute;
+    top: 400;
+    bottom: 0;
+    left: 0;
+    right: 1350;
+    margin: auto
+}
+
+/* Place du joueur numéro 3 */
+.Joueur3{ 
+    width: 150px;
+    height: 150px;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 18px;
+    background-color: black;
+    color: white;
+    
+    /* Centrer la div au millieu de la page */
+    position:absolute;
+    top: 0;
+    bottom: 480;
+    left: 0;
+    right: 1350;
+    margin: auto
+}
+
+/* Place du joueur numéro 4 */
+.Joueur4{ 
+    width: 150px;
+    height: 150px;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 18px;
+    background-color: black;
+    color: white;
+    
+    /* Centrer la div au millieu de la page */
+    position:absolute;
+    top: 0;
+    bottom: 630;
+    left: 0;
+    right: 0;
+    margin: auto
+}
+
+/* Place du joueur numéro 5 */
+.Joueur5{ 
+    width: 150px;
+    height: 150px;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 18px;
+    background-color: black;
+    color: white;
+    
+    /* Centrer la div au millieu de la page */
+    position:absolute;
+    top: 0;
+    bottom: 480;
+    left: 1350;
+    right: 0;
+    margin: auto
+}
+
+/* Place du joueur numéro 6 */
+.Joueur6{ 
+    width: 150px;
+    height: 150px;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 18px;
+    background-color: black;
+    color: white;
+    
+    /* Centrer la div au millieu de la page */
+    position:absolute;
+    top: 400;
+    bottom: 0;
+    left: 1350;
+    right: 0;
+    margin: auto
+}
