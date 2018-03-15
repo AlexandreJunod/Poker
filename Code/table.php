@@ -29,9 +29,13 @@ if(isset($_SESSION['Pseudo']))
     $query = "SELECT COUNT(idSiege) AS Places FROM poker.siege WHERE fkJoueurSiege IS NULL AND fkEtatSiege='1'";
     $SiegesVides = $dbh->query($query) or die ("SQL Error in:<br> $query <br>Error message:".$dbh->errorInfo()[2]);
     
-    //Regardes quelles places sont occupées, afin d'afficher les différents joueurs et leurs noms
+    //Regarde quelles places sont occupées, afin d'afficher les différents joueurs et leurs noms
     $query = "SELECT idSiege, ArgentSiege, PseudoJoueur FROM poker.joueur INNER JOIN poker.siege ON joueur.idJoueur=siege.fkJoueurSiege WHERE fkJoueurSiege IS NOT NULL AND fkJoueurSiege=idJoueur";
     $SiegesOccupes = $dbh->query($query) or die ("SQL Error in:<br> $query <br>Error message:".$dbh->errorInfo()[2]);
+    
+    //Regarde si la partie à déjà commencer
+    $query = "SELECT HeureDebutPartie FROM poker.partie WHERE HeureDebutPartie IS NOT NULL";
+    $PartieEnCours = $dbh->query($query) or die ("SQL Error in:<br> $query <br>Error message:".$dbh->errorInfo()[2]);
     
     foreach($SiegesOccupes as $SiegeOccupe) //Indique le numéro des places occupées
     {
@@ -51,16 +55,28 @@ if(isset($_SESSION['Pseudo']))
         {
             $SiegesVide = $SiegesVides->fetch(); //fetch -> aller chercher
             extract($SiegesVide); //$Places
-            if($Places > 0) // Compte le nombre de joueurs manquants
+            
+            if($PartieEnCours->rowCount() == 0) //S'assure que la partie n'as pas encore commencer // PROBLEME ICI, JE NE SAIS PAS OU PLACER SA POUR PASSER QUE LES JOUEURS QUI REJOIGNENT EN MILLIEU DE PARTE PASSE EN FKETATSIEGE = 2
             {
-                echo "<div class='ErrorMsg'>En attente de $Places joueurs</div>";
-            }
-            else
-            {
-                //La partie commence
-                $query = "UPDATE poker.siege SET fkEtatSiege='2' WHERE idSiege='$idSiege'";
-                $dbh->query($query) or die ("SQL Error in:<br> $query <br>Error message:".$dbh->errorInfo()[2]);
-                echo "<div class='ErrorMsg'>La partie à commencé</div>";
+                if($Places > 0) // Compte le nombre de joueurs manquants
+                {
+                    echo "<div class='ErrorMsg'>En attente de $Places joueurs</div>";
+                }
+                else //Il ne manque plus aucun joueur
+                {           
+                    date_default_timezone_set('Europe/Berlin'); //Règle l'heure en UTC+01:00
+                    $heure = date('H:i:s');
+
+                    //La partie commence
+                    $query = "UPDATE poker.siege SET fkEtatSiege='2' WHERE idSiege='$idSiege' AND fkEtatSiege = '1'";
+                    $dbh->query($query) or die ("SQL Error in:<br> $query <br>Error message:".$dbh->errorInfo()[2]);
+
+                    //L'heure du début de partie est enregistrée
+                    $query = "UPDATE poker.partie SET HeureDebutPartie='$heure'";
+                    $dbh->query($query) or die ("SQL Error in:<br> $query <br>Error message:".$dbh->errorInfo()[2]);
+
+                    echo "<div class='ErrorMsg'>La partie à commencé</div>";
+                }
             }
         }
     }
@@ -115,6 +131,7 @@ if(isset($_POST['SeLever']))
             <button type="submit" form="SeLeverForm" name="SeLever">Se lever</button>
         </div>
     </body>
+    <script>setInterval(function(){location.reload()},3000);</script> <!-- Refresh la page, code donné par mon chef de projet. Rend le jeu plus fluide --> 
 </html>
 
 <?php

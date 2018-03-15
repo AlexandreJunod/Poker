@@ -57,7 +57,7 @@ CREATE TABLE IF NOT EXISTS Poker.Partie (
   PotPartie INT(11) NULL DEFAULT NULL,
   BoardPartie VARCHAR(45) NULL DEFAULT NULL,
   BlindPartie INT(11) NULL DEFAULT NULL,
-  HeureDebutPartie VARCHAR(45) NULL DEFAULT NULL,
+  HeureDebutPartie TIME NULL DEFAULT NULL,
   PRIMARY KEY (idPartie))
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8;
@@ -72,7 +72,10 @@ DEFAULT CHARACTER SET = utf8;
 
 CREATE TABLE IF NOT EXISTS Poker.Parametres (
   idParametres INT(11) NOT NULL AUTO_INCREMENT,
-  TempsAugmentationBlindParametres INT(11) NOT NULL,
+  NomParametres VARCHAR(45) NOT NULL,
+  ValeurInt INT(11) NULL DEFAULT NULL,
+  ValeurDate DATETIME NULL DEFAULT NULL,
+  ValeurChar VARCHAR(45) NULL DEFAULT NULL,
   PRIMARY KEY (idParametres))
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8;
@@ -90,4 +93,16 @@ INSERT INTO poker.siege (fkPartieSiege, fkEtatSiege) VALUES ('1', '1');
 INSERT INTO poker.siege (fkPartieSiege, fkEtatSiege) VALUES ('1', '1');
 INSERT INTO poker.siege (fkPartieSiege, fkEtatSiege) VALUES ('1', '1');
 INSERT INTO poker.siege (fkPartieSiege, fkEtatSiege) VALUES ('1', '1');
-INSERT INTO poker.parametres (TempsAugmentationBlindParametres) VALUES ('5');
+INSERT INTO poker.parametres (NomParametres, ValeurInt) VALUES ('TempsAugmentationBlind', '5');
+
+-- Ajout de 9 joueurs, afin de pouvoir tester sans avoir a recréer à chaque fois les joueurs
+INSERT INTO poker.joueur (PseudoJoueur, MotDePasseJoueur) VALUES ('Alexandre', PASSWORD('Pa$$w0rd'));
+INSERT INTO poker.joueur (PseudoJoueur, MotDePasseJoueur) VALUES ('Alexandre2', PASSWORD('Pa$$w0rd'));
+INSERT INTO poker.joueur (PseudoJoueur, MotDePasseJoueur) VALUES ('Alexandre3', PASSWORD('Pa$$w0rd'));
+INSERT INTO poker.joueur (PseudoJoueur, MotDePasseJoueur) VALUES ('Alexandre4', PASSWORD('Pa$$w0rd'));
+INSERT INTO poker.joueur (PseudoJoueur, MotDePasseJoueur) VALUES ('Alexandre5', PASSWORD('Pa$$w0rd'));
+INSERT INTO poker.joueur (PseudoJoueur, MotDePasseJoueur) VALUES ('Alexandre6', PASSWORD('Pa$$w0rd'));
+INSERT INTO poker.joueur (PseudoJoueur, MotDePasseJoueur) VALUES ('Alexandre7', PASSWORD('Pa$$w0rd'));
+INSERT INTO poker.joueur (PseudoJoueur, MotDePasseJoueur) VALUES ('Alexandre8', PASSWORD('Pa$$w0rd'));
+INSERT INTO poker.joueur (PseudoJoueur, MotDePasseJoueur) VALUES ('Alexandre9', PASSWORD('Pa$$w0rd'));
+

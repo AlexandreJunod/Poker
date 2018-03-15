@@ -21,6 +21,7 @@ if(isset($_SESSION['Pseudo']))
 if(isset($_SESSION['TablePleine'])) //Message d'erreur, s'il a rejoint la table lorsqu'elle était pleine
 {
     echo "<div class='ErrorMsg'>Partie en cours, veuillez ressayer plus tard</div>";
+    echo "<script>setInterval(function(){location.reload()},2000);</script>"; //Refresh la page, code donné par mon chef de projet. Evite que le message reste toujours affiché
 }
 
 //----------------------------- Traitement POST ------------------------------------------
