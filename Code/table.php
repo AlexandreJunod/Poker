@@ -36,27 +36,19 @@ if(isset($_SESSION['Pseudo']))
     //Regarde si la partie à déjà commencer
     $query = "SELECT HeureDebutPartie FROM poker.partie WHERE HeureDebutPartie IS NOT NULL";
     $PartieEnCours = $dbh->query($query) or die ("SQL Error in:<br> $query <br>Error message:".$dbh->errorInfo()[2]);
-    
-    foreach($SiegesOccupes as $SiegeOccupe) //Indique le numéro des places occupées
-    {
-        $PlacePrise = $SiegeOccupe['idSiege'];
-        $PlacePseudo = $SiegeOccupe['PseudoJoueur'];
-        $PlaceArgent = number_format ($SiegeOccupe['ArgentSiege'], $decimals = 0, $dec_point = ".", $thousands_sep = "'" ); //Format de nombre, afin de montrer les milliers plus facilement
-        echo "<div class='Joueur$PlacePrise'>$PlacePseudo<br>$PlaceArgent$</div>";
-    }
-            
+                
     if($Jetons->rowCount() > 0) //Recherche l'argent du joueur
     {
         $Jeton = $Jetons->fetch(); //fetch -> aller chercher
         extract($Jeton); //$idSiege, $ArgentSiege
         $ArgentSiege = number_format ($ArgentSiege, $decimals = 0, $dec_point = ".", $thousands_sep = "'" ); //Format de nombre, afin de montrer les milliers plus facilement
         
-        if($SiegesVides->rowCount() > 0) //Donne le nombre de joueurs manquants
+        if($SiegesVides->rowCount() > 0) //Regarde si la table est pleine
         {
             $SiegesVide = $SiegesVides->fetch(); //fetch -> aller chercher
             extract($SiegesVide); //$Places
             
-            if($PartieEnCours->rowCount() == 0) //S'assure que la partie n'as pas encore commencer // PROBLEME ICI, JE NE SAIS PAS OU PLACER SA POUR PASSER QUE LES JOUEURS QUI REJOIGNENT EN MILLIEU DE PARTE PASSE EN FKETATSIEGE = 2
+            if($PartieEnCours->rowCount() == 0) //S'assure que la partie n'as pas encore commencer
             {
                 if($Places > 0) // Compte le nombre de joueurs manquants
                 {
@@ -78,6 +70,12 @@ if(isset($_SESSION['Pseudo']))
                     echo "<div class='ErrorMsg'>La partie à commencé</div>";
                 }
             }
+            else //La partie est en cours, le joueur qui rejoins en pleine partie, se retrouve en jeu
+            {
+                //Change l'etat du joueur qui à rejoins la table
+                $query = "UPDATE poker.siege SET fkEtatSiege='2' WHERE idSiege='$idSiege' AND fkEtatSiege = '1'";
+                $dbh->query($query) or die ("SQL Error in:<br> $query <br>Error message:".$dbh->errorInfo()[2]);
+            }
         }
     }
     else //Si l'id et l'argent n'as pas été trouver, l'utilisateur n'est pas encore sur une chaise
@@ -98,13 +96,69 @@ if(isset($_SESSION['Pseudo']))
             header('Location: accueil.php');
         }
     }
+    
+    $PremierePlace = 7 - $idSiege; //Permet de savoir de combien de place il faut avancer, pour se trouver a la première place
+    
+    foreach($SiegesOccupes as $SiegeOccupe) //Indique le numéro des places occupées
+    {
+        $PlacePrise = $SiegeOccupe['idSiege'];
+        $PlacePseudo = $SiegeOccupe['PseudoJoueur'];
+        $PlaceArgent = number_format ($SiegeOccupe['ArgentSiege'], $decimals = 0, $dec_point = ".", $thousands_sep = "'" ); //Format de nombre, afin de montrer les milliers plus facilement
+        
+        echo "$PremierePlace";
+        for($i = 1; $i < $PremierePlace; $i++)
+        {
+            if($PlacePrise == 6)
+            {
+                $PlacePrise = 1;
+            }
+            $PlacePrise++;
+            echo "ceci est $PremierePlace";
+        }
+        
+        echo "<div class='Joueur$PlacePrise'>$PlacePseudo<br>$PlaceArgent$</div>";
+        
+        /*echo "<div class='Joueur1'>$Pseudo<br>$ArgentSiege$</div>"; //Le joueur se voit toujours à la première place
+        
+        if($idSiege == 1)
+        {
+            echo "<div class='Joueur$PlacePrise'>$PlacePseudo<br>$PlaceArgent$</div>"; 
+        }
+        else if($PlacePrise < $idSiege)
+        {
+            $PlacePrise++;
+            echo $PlacePrise;
+            echo "<div class='Joueur$PlacePrise'>$PlacePseudo<br>$PlaceArgent$</div>";
+        }
+        else if($PlacePrise != $idSiege)
+        {
+            echo "<div class='Joueur$PlacePrise'>$PlacePseudo<br>$PlaceArgent$</div>"; 
+        }*/
+    }
 }
 
 //----------------------------- Traitement POST ------------------------------------------
 
 // Remet la chaise dans son état initial, et renvoie le joueur a la page d'accueil 
 if(isset($_POST['SeLever']))
-{
+{       
+    if($SiegesVides->rowCount() > 0) //Regarde si la table est pleine
+    {
+        $SiegesVide = $SiegesVides->fetch(); //fetch -> aller chercher
+        extract($SiegesVide); //$Places
+        
+        if($Places >=4 ) //Supprime l'heure de début de partie, quand il ne reste plus que 1 ou 0 joueurs à table
+        {            
+            //L'heure du début de partie est enlevé
+            $query = "UPDATE poker.partie SET HeureDebutPartie=NULL";
+            $dbh->query($query) or die ("SQL Error in:<br> $query <br>Error message:".$dbh->errorInfo()[2]);
+            
+            //Le dernier joueur passe en mode "attente"
+            $query = "Update poker.siege SET fkEtatSiege='1' WHERE fkEtatSiege='2'";
+            $dbh->query($query) or die ("SQL Error in:<br> $query <br>Error message:".$dbh->errorInfo()[2]);
+        }
+    }
+    
     //Le joueur quitte la table
     $query = "UPDATE poker.siege SET ArgentSiege=NULL, MainSiege=NULL, fkEtatSiege='1', fkJoueurSiege=NULL WHERE idSiege='$idSiege'";
     $dbh->query($query) or die ("SQL Error in:<br> $query <br>Error message:".$dbh->errorInfo()[2]);

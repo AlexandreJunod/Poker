@@ -57,6 +57,7 @@ CREATE TABLE IF NOT EXISTS Poker.Partie (
   PotPartie INT(11) NULL DEFAULT NULL,
   BoardPartie VARCHAR(45) NULL DEFAULT NULL,
   BlindPartie INT(11) NULL DEFAULT NULL,
+  MainPartie INT(11) NULL DEFAULT NULL,
   HeureDebutPartie TIME NULL DEFAULT NULL,
   PRIMARY KEY (idPartie))
 ENGINE = InnoDB
@@ -86,7 +87,8 @@ SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
 
 INSERT INTO poker.partie (PotPartie, BlindPartie) VALUES ('0', '3000');
 INSERT INTO poker.etat (DescriptionEtat) VALUES ('En attente');
-INSERT INTO poker.etat (DescriptionEtat) VALUES ('Joue');
+INSERT INTO poker.etat (DescriptionEtat) VALUES ('En jeu');
+INSERT INTO poker.etat (DescriptionEtat) VALUES ('Doit jouer');
 INSERT INTO poker.siege (fkPartieSiege, fkEtatSiege) VALUES ('1', '1');
 INSERT INTO poker.siege (fkPartieSiege, fkEtatSiege) VALUES ('1', '1');
 INSERT INTO poker.siege (fkPartieSiege, fkEtatSiege) VALUES ('1', '1');
