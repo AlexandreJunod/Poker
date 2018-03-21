@@ -124,28 +124,6 @@
     float: left;
 }
 
-
-/********** Mise en forme pour les messages d'erreurs **********/
-
-.ErrorMsg{
-    position: sticky;
-    font-family: Arial, Helvetica, sans-serif;
-    font-size: 25px;
-    color: red;
-    
-    /* Centrer la div verticallement au millieu, 20 pixels plus bas que le haut de la page */
-    position:absolute;
-    width: 99%;
-    padding-top: 20px;
-    text-align: center;
-}
-
-/********** Div pour toutes les pages **********/
-
-body{
-    background-size: cover;
-}
-
 /********** Div pour la page : accueil.php **********/
 
 .ContainerAccueil{ 
@@ -163,18 +141,6 @@ body{
     margin: auto;
 }
 
-/* Contient le pseudo du joueur et le bouton de déconnexion, dans la page : accueil.php*/
-/* Contient le pseudo du joueur, l'argent du joueur et le bouton se lever, dans la page : table.php*/
-.InfosJoueur{
-    font-family: Arial, Helvetica, sans-serif;
-    font-size: 18px;
-    color: white;
-    
-    width: 250px;
-    height: 200px;
-    float:right;
-}
-
 /********** Div pour la page : table.php **********/
 
 /* Place du joueur numéro 1 */
@@ -186,7 +152,6 @@ body{
     background-color: black;
     color: white;
     
-    /* Centrer la div au millieu de la page */
     position:absolute;
     top: 550;
     bottom: 0;
@@ -204,7 +169,6 @@ body{
     background-color: black;
     color: white;
     
-    /* Centrer la div au millieu de la page */
     position:absolute;
     top: 400;
     bottom: 0;
@@ -222,7 +186,6 @@ body{
     background-color: black;
     color: white;
     
-    /* Centrer la div au millieu de la page */
     position:absolute;
     top: 0;
     bottom: 480;
@@ -240,7 +203,6 @@ body{
     background-color: black;
     color: white;
     
-    /* Centrer la div au millieu de la page */
     position:absolute;
     top: 0;
     bottom: 630;
@@ -258,7 +220,6 @@ body{
     background-color: black;
     color: white;
     
-    /* Centrer la div au millieu de la page */
     position:absolute;
     top: 0;
     bottom: 480;
@@ -276,11 +237,145 @@ body{
     background-color: black;
     color: white;
     
-    /* Centrer la div au millieu de la page */
     position:absolute;
     top: 400;
     bottom: 0;
     left: 1350;
     right: 0;
     margin: auto
+}
+
+/* Jeton Dealer/Big Blind/Small Blind du joueur numéro 1 */
+.Jeton1{ 
+    width: 30px;
+    height: 30px;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 18px;
+    background-color: red;
+    color: white;
+    
+    position:absolute;
+    top: 550;
+    bottom: 0;
+    left: 150;
+    right: 0;
+    margin: auto
+}
+
+/* Jeton Dealer/Big Blind/Small Blind du joueur numéro 2 */
+.Jeton2{ 
+    width: 30px;
+    height: 30px;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 18px;
+    background-color: red;
+    color: white;
+    
+    position:absolute;
+    top: 400;
+    bottom: 0;
+    left: 0;
+    right: 1200;
+    margin: auto
+}
+
+/* Jeton Dealer/Big Blind/Small Blind du joueur numéro 3 */
+.Jeton3{ 
+    width: 30px;
+    height: 30px;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 18px;
+    background-color: red;
+    color: white;
+    
+    position:absolute;
+    top: 0;
+    bottom: 480;
+    left: 0;
+    right: 1200;
+    margin: auto
+}
+
+/* Jeton Dealer/Big Blind/Small Blind du joueur numéro 4 */
+.Jeton4{ 
+    width: 30px;
+    height: 30px;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 18px;
+    background-color: red;
+    color: white;
+    
+    position:absolute; 
+    top: 0;
+    bottom: 630;
+    left: 150;
+    right: 0;
+    margin: auto
+}
+
+/* Jeton Dealer/Big Blind/Small Blind du joueur numéro 5 */
+.Jeton5{ 
+    width: 30px;
+    height: 30px;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 18px;
+    background-color: red;
+    color: white;
+    
+    position:absolute;
+     top: 0;
+    bottom: 480;
+    left: 1500;
+    right: 0;
+    margin: auto
+}
+
+/* Jeton Dealer/Big Blind/Small Blind du joueur numéro 6 */
+.Jeton6{ 
+    width: 30px;
+    height: 30px;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 18px;
+    background-color: red;
+    color: white;
+    
+    position:absolute;
+    top: 400;
+    bottom: 0;
+    left: 1500;
+    right: 0;
+    margin: auto
+}
+
+/********** Div pour toutes les pages **********/
+
+body{
+    background-size: cover;
+}
+
+/* Contient le pseudo du joueur et le bouton de déconnexion, dans la page : accueil.php*/
+/* Contient le pseudo du joueur, l'argent du joueur et le bouton se lever, dans la page : table.php*/
+.InfosJoueur{
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 18px;
+    color: white;
+    
+    width: 250px;
+    height: 200px;
+    float:right;
+}
+
+/********** Mise en forme pour les messages d'erreurs **********/
+
+.ErrorMsg{
+    position: sticky;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 25px;
+    color: red;
+    
+    /* Centrer la div verticallement au millieu, 20 pixels plus bas que le haut de la page */
+    position:absolute;
+    width: 99%;
+    padding-top: 20px;
+    text-align: center;
 }

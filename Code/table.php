@@ -105,20 +105,27 @@ if(isset($_SESSION['Pseudo']))
         $PlacePseudo = $SiegeOccupe['PseudoJoueur'];
         $PlaceArgent = number_format ($SiegeOccupe['ArgentSiege'], $decimals = 0, $dec_point = ".", $thousands_sep = "'" ); //Format de nombre, afin de montrer les milliers plus facilement
         
-        echo "$PremierePlace";
-        for($i = 1; $i < $PremierePlace; $i++)
+        for($i = 1; $i <= $PremierePlace; $i++) //Avance le joueur du nombre de places pour se trouvé à la première place
         {
-            if($PlacePrise == 6)
+            $PlacePrise++;
+            if($PlacePrise == 7) //Quand le calcul dépasse la place numéro 7, qui n'existe pas, il recommenc à la place 1
             {
                 $PlacePrise = 1;
             }
-            $PlacePrise++;
-            echo "ceci est $PremierePlace";
-        }
+        }        
         
-        echo "<div class='Joueur$PlacePrise'>$PlacePseudo<br>$PlaceArgent$</div>";
+        echo "<div class='Joueur$PlacePrise'>$PlacePseudo<br>$PlaceArgent$</div>"; //Affiche les joueurs
+        echo "<div class='Jeton1'>D</div>";
+        echo "<div class='Jeton2'>SB</div>";
+        echo "<div class='Jeton3'>BB</div>";
+        echo "<div class='Jeton4'>R</div>";
+        echo "<div class='Jeton5'>R</div>";
+        echo "<div class='Jeton6'>R</div>";
         
-        /*echo "<div class='Joueur1'>$Pseudo<br>$ArgentSiege$</div>"; //Le joueur se voit toujours à la première place
+        /* =============== Ancien système de calcul de places, pas adapté pour les blinds ===============
+        echo "User : $Pseudo, Place BD : $idSiege, Nb tour a tourné : $PremierePlace, place occupée : $PlacePrise";
+        
+        echo "<div class='Joueur1'>$Pseudo<br>$ArgentSiege$</div>"; //Le joueur se voit toujours à la première place
         
         if($idSiege == 1)
         {
