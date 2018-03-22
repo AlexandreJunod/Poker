@@ -33,6 +33,34 @@ if(isset($_SESSION['Pseudo']))
     $query = "SELECT idSiege, ArgentSiege, PseudoJoueur FROM poker.joueur INNER JOIN poker.siege ON joueur.idJoueur=siege.fkJoueurSiege WHERE fkJoueurSiege IS NOT NULL AND fkJoueurSiege=idJoueur";
     $SiegesOccupes = $dbh->query($query) or die ("SQL Error in:<br> $query <br>Error message:".$dbh->errorInfo()[2]);
     
+    //Regarde qui est le dealer, le small blind et le big blind
+    $query = "SELECT DealerPartie, SmallBlindPartie, BigBlindPartie FROM poker.partie";
+    $JetonJoueurs = $dbh->query($query) or die ("SQL Error in:<br> $query <br>Error message:".$dbh->errorInfo()[2]);
+    
+    //Regarde quel est le prochain joueur après le dealer
+    $query = "SELECT idSiege FROM poker.siege WHERE fkJoueurSiege IS NOT NULL and idSiege > (SELECT DealerPartie FROM poker.partie WHERE DealerPartie IS NOT NULL) and idSiege != (SELECT SmallBlindPartie FROM poker.partie WHERE SmallBlindPartie IS NOT NULL) and idSiege != (SELECT BigBlindPartie FROM poker.partie WHERE BigBlindPartie IS NOT NULL) ORDER BY idSiege ASC LIMIT 1";
+    $Dealers = $dbh->query($query) or die ("SQL Error in:<br> $query <br>Error message:".$dbh->errorInfo()[2]);
+    
+    //Regarde quel est le prochain joueur après le dealer en recommençant depuis le premier joueur a table
+    $query = "SELECT idSiege FROM poker.siege WHERE fkJoueurSiege IS NOT NULL and idSiege != (SELECT SmallBlindPartie FROM poker.partie WHERE SmallBlindPartie IS NOT NULL) and idSiege != (SELECT BigBlindPartie FROM poker.partie WHERE BigBlindPartie IS NOT NULL) ORDER BY idSiege ASC LIMIT 1";
+    $DealersRetourTable = $dbh->query($query) or die ("SQL Error in:<br> $query <br>Error message:".$dbh->errorInfo()[2]);
+    
+    //Regarde quel est le prochain joueur après le small blind
+    $query = "SELECT idSiege FROM poker.siege WHERE fkJoueurSiege IS NOT NULL and idSiege > (SELECT SmallBlindPartie FROM poker.partie WHERE SmallBlindPartie IS NOT NULL) and idSiege != (SELECT DealerPartie FROM poker.partie WHERE DealerPartie IS NOT NULL) and idSiege != (SELECT BigBlindPartie FROM poker.partie WHERE BigBlindPartie IS NOT NULL) ORDER BY idSiege ASC LIMIT 1";
+    $SmallBlinds = $dbh->query($query) or die ("SQL Error in:<br> $query <br>Error message:".$dbh->errorInfo()[2]);
+    
+    //Regarde quel est le prochain joueur après le small blind en recommençant depuis le premier joueur a table
+    $query = "SELECT idSiege FROM poker.siege WHERE fkJoueurSiege IS NOT NULL and idSiege != (SELECT DealerPartie FROM poker.partie WHERE DealerPartie IS NOT NULL) and idSiege != (SELECT BigBlindPartie FROM poker.partie WHERE BigBlindPartie IS NOT NULL) ORDER BY idSiege ASC LIMIT 1";
+    $SmallBlindsRetourTable = $dbh->query($query) or die ("SQL Error in:<br> $query <br>Error message:".$dbh->errorInfo()[2]);
+    
+    //Regarde quel est le prochain joueur après le big blind
+    $query = "SELECT idSiege FROM poker.siege WHERE fkJoueurSiege IS NOT NULL and idSiege > (SELECT BigBlindPartie FROM poker.partie WHERE BigBlindPartie IS NOT NULL) and idSiege != (SELECT DealerPartie FROM poker.partie WHERE DealerPartie IS NOT NULL) and idSiege != (SELECT SmallBlindPartie FROM poker.partie WHERE SmallBlindPartie IS NOT NULL) ORDER BY idSiege ASC LIMIT 1";
+    $BigBlinds = $dbh->query($query) or die ("SQL Error in:<br> $query <br>Error message:".$dbh->errorInfo()[2]);
+    
+    //Regarde quel est le prochain joueur après le big blind en recommençant depuis le premier joueur a table
+    $query = "SELECT idSiege FROM poker.siege WHERE fkJoueurSiege IS NOT NULL and idSiege != (SELECT DealerPartie FROM poker.partie WHERE DealerPartie IS NOT NULL) and idSiege != (SELECT SmallBlindPartie FROM poker.partie WHERE SmallBlindPartie IS NOT NULL) ORDER BY idSiege ASC LIMIT 1";
+    $BigBlindsRetourTable = $dbh->query($query) or die ("SQL Error in:<br> $query <br>Error message:".$dbh->errorInfo()[2]);
+    
     //Regarde si la partie à déjà commencer
     $query = "SELECT HeureDebutPartie FROM poker.partie WHERE HeureDebutPartie IS NOT NULL";
     $PartieEnCours = $dbh->query($query) or die ("SQL Error in:<br> $query <br>Error message:".$dbh->errorInfo()[2]);
@@ -115,12 +143,6 @@ if(isset($_SESSION['Pseudo']))
         }        
         
         echo "<div class='Joueur$PlacePrise'>$PlacePseudo<br>$PlaceArgent$</div>"; //Affiche les joueurs
-        echo "<div class='Jeton1'>D</div>";
-        echo "<div class='Jeton2'>SB</div>";
-        echo "<div class='Jeton3'>BB</div>";
-        echo "<div class='Jeton4'>R</div>";
-        echo "<div class='Jeton5'>R</div>";
-        echo "<div class='Jeton6'>R</div>";
         
         /* =============== Ancien système de calcul de places, pas adapté pour les blinds ===============
         echo "User : $Pseudo, Place BD : $idSiege, Nb tour a tourné : $PremierePlace, place occupée : $PlacePrise";
@@ -141,6 +163,42 @@ if(isset($_SESSION['Pseudo']))
         {
             echo "<div class='Joueur$PlacePrise'>$PlacePseudo<br>$PlaceArgent$</div>"; 
         }*/
+    }
+    
+    // Affiche le jeton de tous les joueurs
+    if($JetonJoueurs->rowCount() > 0 && $PartieEnCours->rowCount() != 0) //S'assure que les jetons sont assignés aux joueurs et que la partie a commencer
+    {
+        //Affiche le dealer, le small blind et le big blind
+        $JetonJoueur = $JetonJoueurs->fetch(); //fetch -> aller chercher
+        $LeDealer = $JetonJoueur['DealerPartie'];
+        $LeSmallBlind = $JetonJoueur['SmallBlindPartie'];
+        $LeBigBlind = $JetonJoueur['BigBlindPartie'];
+
+        for($i = 1; $i <= $PremierePlace; $i++) //Le jeton fait autant de nombres de tours que le joueur à fait
+        {
+            $LeDealer++;
+            $LeSmallBlind++;
+            $LeBigBlind++;
+
+            if($LeDealer == 7) 
+            {
+                $LeDealer = 1;
+            }
+
+            if($LeSmallBlind == 7)
+            {
+                $LeSmallBlind = 1;
+            }
+
+            if($LeBigBlind == 7)
+            {
+                $LeBigBlind = 1;
+            }
+        }     
+        //Affiche les jetons
+        echo "<div class='Jeton$LeDealer'>D</div>";
+        echo "<div class='Jeton$LeSmallBlind'>SB</div>";
+        echo "<div class='Jeton$LeBigBlind'>BB</div>";
     }
 }
 
@@ -172,6 +230,71 @@ if(isset($_POST['SeLever']))
     header('Location: accueil.php');
 }
 
+// Passe à la prochaine main
+if(isset($_POST['ProchaineMain']))
+{
+    if($Places < 3) //S'assure qu'il reste au moins 3 joueurs
+    {
+        if($Dealers->rowCount() > 0) //S'assure qu'il y a un joueur après le Dealer
+        {
+            $Dealer = $Dealers->fetch(); //fetch -> aller chercher
+            extract($Dealer); //$idSiege
+            
+            //Rend le prochain joueur dealer
+            $query = "UPDATE poker.partie SET DealerPartie ='$idSiege'";
+            $dbh->query($query) or die ("SQL Error in:<br> $query <br>Error message:".$dbh->errorInfo()[2]);
+        }
+        else
+        {
+            $DealerRetourTable = $DealersRetourTable->fetch(); //fetch -> aller chercher
+            extract($DealerRetourTable); //$idSiege
+            
+            //Rend le prochain joueur dealer, en recommençant depuis le premier joueur de la table
+            $query = "UPDATE poker.partie SET DealerPartie ='$idSiege'";
+            $dbh->query($query) or die ("SQL Error in:<br> $query <br>Error message:".$dbh->errorInfo()[2]);
+        }
+        
+        if($SmallBlinds->rowCount() > 0) //S'assure qu'il y a un joueur après le Small Blind
+        {
+            $SmallBlind = $SmallBlinds->fetch(); //fetch -> aller chercher
+            extract($SmallBlind); //$idSiege
+            
+            //Rend le prochain joueur small blind
+            $query = "UPDATE poker.partie SET SmallBlindPartie ='$idSiege'";
+            $dbh->query($query) or die ("SQL Error in:<br> $query <br>Error message:".$dbh->errorInfo()[2]);
+        }
+        else
+        {
+            $SmallBlindRetourTable = $SmallBlindsRetourTable->fetch(); //fetch -> aller chercher
+            extract($SmallBlindRetourTable); //$idSiege
+            
+            //Rend le prochain joueur dealer, en recommençant depuis le premier joueur de la table
+            $query = "UPDATE poker.partie SET SmallBlindPartie ='$idSiege'";
+            $dbh->query($query) or die ("SQL Error in:<br> $query <br>Error message:".$dbh->errorInfo()[2]);
+        }
+        
+        if($BigBlinds->rowCount() > 0) //S'assure qu'il y a un joueur après le Big Blind
+        {
+            $BigBlind = $BigBlinds->fetch(); //fetch -> aller chercher
+            extract($BigBlind); //$idSiege
+            
+            //Rend le prochain joueur big blind
+            $query = "UPDATE poker.partie SET BigBlindPartie ='$idSiege'";
+            $dbh->query($query) or die ("SQL Error in:<br> $query <br>Error message:".$dbh->errorInfo()[2]);
+        }
+        else
+        {
+            $BigBlindRetourTable = $BigBlindsRetourTable->fetch(); //fetch -> aller chercher
+            extract($BigBlindRetourTable); //$idSiege
+            
+            //Rend le prochain joueur dealer, en recommençant depuis le premier joueur de la table
+            $query = "UPDATE poker.partie SET BigBlindPartie ='$idSiege'";
+            $dbh->query($query) or die ("SQL Error in:<br> $query <br>Error message:".$dbh->errorInfo()[2]);
+        }
+    }
+    header('Location: table.php'); //Empêcher le formulaire de se renvoyer en boucle
+}
+
 //----------------------------- Traitement GET -------------------------------------------
 
 //QUE DU PHP JUSQU'ICI
@@ -191,6 +314,17 @@ if(isset($_POST['SeLever']))
             <form method="post" id="SeLeverForm"></form>
             <button type="submit" form="SeLeverForm" name="SeLever">Se lever</button>
         </div>
+        <?php 
+        if($Pseudo == 'Alexandre')
+        {
+            ?>
+            <div class="Button">
+                <form method="post" id="ProchaineMainForm"></form>
+                <button type="submit" form="ProchaineMainForm" name="ProchaineMain">Prochaine main</button>
+            </div>
+            <?php 
+        }
+        ?>
     </body>
     <script>setInterval(function(){location.reload()},3000);</script> <!-- Refresh la page, code donné par mon chef de projet. Rend le jeu plus fluide --> 
 </html>

@@ -247,6 +247,7 @@
 
 /* Jeton Dealer/Big Blind/Small Blind du joueur numéro 1 */
 .Jeton1{ 
+    z-index: 1;
     width: 30px;
     height: 30px;
     font-family: Arial, Helvetica, sans-serif;
@@ -264,6 +265,7 @@
 
 /* Jeton Dealer/Big Blind/Small Blind du joueur numéro 2 */
 .Jeton2{ 
+    z-index: 1;
     width: 30px;
     height: 30px;
     font-family: Arial, Helvetica, sans-serif;
@@ -281,6 +283,7 @@
 
 /* Jeton Dealer/Big Blind/Small Blind du joueur numéro 3 */
 .Jeton3{ 
+    z-index: 1;
     width: 30px;
     height: 30px;
     font-family: Arial, Helvetica, sans-serif;
@@ -298,6 +301,7 @@
 
 /* Jeton Dealer/Big Blind/Small Blind du joueur numéro 4 */
 .Jeton4{ 
+    z-index: 1;
     width: 30px;
     height: 30px;
     font-family: Arial, Helvetica, sans-serif;
@@ -315,6 +319,7 @@
 
 /* Jeton Dealer/Big Blind/Small Blind du joueur numéro 5 */
 .Jeton5{ 
+    z-index: 1;
     width: 30px;
     height: 30px;
     font-family: Arial, Helvetica, sans-serif;
@@ -332,6 +337,7 @@
 
 /* Jeton Dealer/Big Blind/Small Blind du joueur numéro 6 */
 .Jeton6{ 
+    z-index: 1;
     width: 30px;
     height: 30px;
     font-family: Arial, Helvetica, sans-serif;
@@ -378,4 +384,22 @@ body{
     width: 99%;
     padding-top: 20px;
     text-align: center;
+}
+
+/********* Div temporaire, pour des boutons *********/
+
+.Button{
+    width: 400px;
+    height: 200px;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 18px;
+    background-color: grey;
+    
+    /* Centrer la div au millieu de la page */
+    position:absolute;
+    top:0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    margin: auto;
 }
