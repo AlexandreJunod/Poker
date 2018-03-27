@@ -10,6 +10,7 @@
 session_start();
 require_once("includes/fonctions.php");
 ConnectDB();
+date_default_timezone_set('Europe/Berlin'); //Règle l'heure en UTC+01:00
 
 //----------------------------- Traitement SESSION ---------------------------------------
 
@@ -40,7 +41,11 @@ if(isset($_SESSION['Pseudo']))
     //Regarde si la partie à déjà commencer
     $query = "SELECT HeureDebutPartie FROM poker.partie WHERE HeureDebutPartie IS NOT NULL";
     $PartieEnCours = $dbh->query($query) or die ("SQL Error in:<br> $query <br>Error message:".$dbh->errorInfo()[2]);
-                
+    
+    //Permet de gérer la mise minimale des différents joueurs, l'augmentation du blind et le pot
+    $query = "SELECT PotPartie, BlindPartie, MINUTE(HeureDebutPartie) as HeureDebutPartie, ValeurInt FROM partie INNER JOIN poker.parametres ON partie.idPartie=parametres.idParametres";
+    $Pots = $dbh->query($query) or die ("SQL Error in:<br> $query <br>Error message:".$dbh->errorInfo()[2]);
+                        
     if($Jetons->rowCount() > 0) //Recherche l'argent du joueur
     {
         $Jeton = $Jetons->fetch(); //fetch -> aller chercher
@@ -60,7 +65,6 @@ if(isset($_SESSION['Pseudo']))
                 }
                 else //Il ne manque plus aucun joueur
                 {           
-                    date_default_timezone_set('Europe/Berlin'); //Règle l'heure en UTC+01:00
                     $heure = date('H:i:s');
 
                     //La partie commence
@@ -74,17 +78,11 @@ if(isset($_SESSION['Pseudo']))
                     echo "<div class='ErrorMsg'>La partie à commencé</div>";
                 }
             }
-            else //La partie est en cours, le joueur qui rejoins en pleine partie, se retrouve en jeu
-            {
-                //Change l'etat du joueur qui à rejoins la table
-                $query = "UPDATE poker.siege SET fkEtatSiege='2' WHERE idSiege='$idSiege' AND fkEtatSiege = '1'";
-                $dbh->query($query) or die ("SQL Error in:<br> $query <br>Error message:".$dbh->errorInfo()[2]);
-            }
         }
     }
     else //Si l'id et l'argent n'as pas été trouver, l'utilisateur n'est pas encore sur une chaise
     {
-        if($CheckSieges->rowCount() > 0) // S'assure qu'un siège a été trouvé
+        if($CheckSieges->rowCount() > 0 && $PartieEnCours->rowCount() == 0) // S'assure qu'un siège a été trouvé et que la partie n'a pas encore commencé
         {
             $CheckSiege = $CheckSieges->fetch(); //fetch -> aller chercher
             extract($CheckSiege); //$idSiege
@@ -94,9 +92,9 @@ if(isset($_SESSION['Pseudo']))
             $dbh->query($query) or die ("SQL Error in:<br> $query <br>Error message:".$dbh->errorInfo()[2]);
             header('Location: table.php'); //Refresh la page, afin de pouvoir afficher la somme que le joueur possède
         } 
-        else // Aucun siège trouvé, le renvoye a la page d'accueil avec un message d'erreur
+        else // Aucun siège trouvé, le renvoye à la page d'accueil avec un message d'erreur
         {
-            $_SESSION['TablePleine'] = '1';
+            $_SESSION['Erreur'] = '1';
             header('Location: accueil.php');
         }
     }
@@ -172,9 +170,9 @@ if(isset($_SESSION['Pseudo']))
             }
         }     
         //Affiche les jetons
-        echo "<div class='Jeton$LeDealer'>D</div>";
         echo "<div class='Jeton$LeSmallBlind'>SB</div>";
         echo "<div class='Jeton$LeBigBlind'>BB</div>";
+        echo "<div class='Jeton$LeDealer'>D</div>";
     }
 }
 
@@ -182,7 +180,7 @@ if(isset($_SESSION['Pseudo']))
 
 // Remet la chaise dans son état initial, et renvoie le joueur a la page d'accueil 
 if(isset($_POST['SeLever']))
-{       
+{
     if($SiegesVides->rowCount() > 0) //Regarde si la table est pleine
     {
         $SiegesVide = $SiegesVides->fetch(); //fetch -> aller chercher
@@ -206,11 +204,47 @@ if(isset($_POST['SeLever']))
     header('Location: accueil.php');
 }
 
-echo $Places;
 // Passe à la prochaine main
 if(isset($_POST['ProchaineMain']))
-{
-    TournerLesJetons();
+{    
+    TournerLesJetons(); //En changeant de main, les jetons tournent dans le sens des aiguilles d'une montre
+    $JetonJoueurs = $dbh->query($query) or die ("SQL Error in:<br> $query <br>Error message:".$dbh->errorInfo()[2]); //Relancer la requête SQL afin de déduire l'argent au bon joueur
+    
+    //Récupére les emplacements des joueurs qui ont un jeton, retire l'argent aux joueurs. Place les mises minimales et augmente le blind minimum si le temps est écoulé
+    $LeSmallBlindFixe = $JetonJoueur['SmallBlindPartie']; //Permet de déduire l'argent au bon joueur
+    $LeBigBlindFixe = $JetonJoueur['BigBlindPartie']; //Permet de déduire l'argent au bon joueur
+    if($Pots ->rowCount() > 0) // Vérifie que les informations on été récupérées et que le flag a été déclanché en changeant de main
+    {
+        $Pot = $Pots->fetch(); //fetch -> aller chercher
+        extract($Pot); //$PotPartie, $BlindPartie, $HeureDebutPartie, $ValeurInt
+
+        //Calcule combien le small blind et big blind devront payer
+        $MiseSB = $BlindPartie / 2; // Mise minimale du small blind
+        $MiseBB = $BlindPartie;     // Mise minimale du big blind
+        $NewPot = $PotPartie + $MiseSB + $MiseBB;
+
+        //La somme du small blind et big blind est soustraite aux joueurs
+        $query = "UPDATE poker.siege SET ArgentSiege=ArgentSiege-'$MiseSB' WHERE idSiege='$LeSmallBlindFixe'";
+        $dbh->query($query) or die ("SQL Error in:<br> $query <br>Error message:".$dbh->errorInfo()[2]);
+        $query = "UPDATE poker.siege SET ArgentSiege=ArgentSiege-'$MiseBB' WHERE idSiege='$LeBigBlindFixe'";
+        $dbh->query($query) or die ("SQL Error in:<br> $query <br>Error message:".$dbh->errorInfo()[2]);
+        
+        //Le pot est augmenté 
+        $query = "UPDATE poker.partie SET PotPartie='$NewPot'";
+        $dbh->query($query) or die ("SQL Error in:<br> $query <br>Error message:".$dbh->errorInfo()[2]);
+
+        $HeureAugmentationBlind = date('i'); // Récupére l'heure afin de comparer avec l'heure de début de partie
+        $Diff = $HeureAugmentationBlind - $HeureDebutPartie; //Calcule la différence de temps
+
+        if($Diff == $ValeurInt) //Si la différence de temps correspond au temps d'agumentation de blind, on double le blind
+        {
+            $heure = date('H:i:s');
+
+            //L'heure du début de partie est modifié, afin de pouvoir réaugmenter le blind plus tard
+            $query = "UPDATE poker.partie SET HeureDebutPartie='$heure'";
+            $dbh->query($query) or die ("SQL Error in:<br> $query <br>Error message:".$dbh->errorInfo()[2]);
+        } 
+    }    
     header('Location: table.php'); //Empêche le formulaire de se renvoyer en boucle
 }
 
@@ -234,7 +268,7 @@ if(isset($_POST['ProchaineMain']))
             <button type="submit" form="SeLeverForm" name="SeLever">Se lever</button>
         </div>
         <?php 
-        if($Pseudo == 'Alexandre')
+        if($Pseudo == 'Alexandre' && $PartieEnCours->rowCount() != 0) // Le bouton est visible que si on s'appelle Alexandre et que la partie est en cours
         {
             ?>
             <div class="Button">
