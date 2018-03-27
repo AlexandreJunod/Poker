@@ -1,7 +1,7 @@
 <!--====================================================================================================================
 ||  Author : Junod Alexandre                                                                                           ||
 ||  Creation : 02.03.2018                                                                                              ||
-||  Summary : This is the page where the users will play a poker game                                                  ||
+||  Summary : This page is used by the user to get the error massages, join tables or disconnect                       ||
 ||====================================================================================================================-->
 
 <?php
@@ -10,7 +10,6 @@
 session_start();
 require_once("includes/functions.php");
 ConnectDB();
-date_default_timezone_set('Europe/Berlin'); //Set the hour to UTC+01:00
 
 //----------------------------- Processing SESSION ---------------------------------------
 
@@ -19,17 +18,23 @@ if(isset($_SESSION['Pseudo'])) //Recover the pseudo of the user saved on the SES
     $Pseudo = $_SESSION['Pseudo'];
 }
 
-//----------------------------- Processing POST ------------------------------------------
-
-
-if(isset($_POST['Getup'])) //Check if the user clicked on the get up button
+if(isset($_SESSION['Error'])) //Error massage, if the user joined a table full or in game
 {
-    header('Location: home.php'); //The user is redirect to the home
+    echo "<div class='ErrorMsg'>Partie en cours, veuillez ressayer plus tard</div>";
+    echo "<script>setInterval(function(){location.reload()},2000);</script>"; //Refresh the page. Code gived by my projet manager
 }
 
-if(isset($_POST['NextHand'])) //Check if the user clicked to go to the next hand
-{    
-    header('Location: table.php'); //Prevent to send the form in a loop
+//----------------------------- Processing POST ------------------------------------------
+
+if(isset($_POST['JoinTable'])) //Check if the user clicked on the button to join the table
+{
+    header('Location: table.php'); //The user is trying to join the table
+}
+
+if(isset($_POST['Signout'])) //Check if the user clicked on the sign out button
+{
+    unset($_SESSION); //Unset all the SESSIONS saved of the user
+    header('Location: index.php'); //The user is redirect to the log in page
 }
 
 //----------------------------- Processing GET -------------------------------------------
@@ -47,27 +52,18 @@ if(isset($_POST['NextHand'])) //Check if the user clicked to go to the next hand
         <title><?php echo $TitleTab; ?></title>
     </head>
     <body background="includes\images\TablePoker.jpg">
-        <div class="InfosPlayer"><?php echo "$Pseudo<br>Money in coming"; ?>
-            <form method="post" id="GetupForm"></form>
-            <button type="submit" form="GetupForm" name="Getup">Se lever</button>
+        <div class="InfosPlayer"><?php echo $Pseudo; ?>
+            <form method="post" id="SignoutForm"></form>
+            <button type="submit" form="SignoutForm" name="Signout">Déconnexion</button>
         </div>
-        <?php 
-        if($Pseudo == 'Alexandre') // The button is visible only of the pseudo is Alexandre
-        {
-            ?>
-            <div class="Button">
-                <form method="post" id="NextHandForm"></form>
-                <button type="submit" form="NextHandForm" name="NextHand">Prochaine main</button>
-            </div>
-            <?php 
-        }
-        ?>
+        <form method="post" id="JoinTableForm"></form>
+        <div class="ContainerHome"><button type="submit" form="JoinTableForm" name="JoinTable">Rejoindre la table</button></div>
     </body>
-    <script>setInterval(function(){location.reload()},3000);</script> <!-- //Refresh the page. Code gived by my projet manager --> 
 </html>
 
 <?php
 //----------------------------- Saving SESSION ------------------------------------
 
 $_SESSION['Pseudo'] = $Pseudo;
+unset($_SESSION['Error']); //Unset the SESSION Error, to stop to show the massage at next refresh
 ?>

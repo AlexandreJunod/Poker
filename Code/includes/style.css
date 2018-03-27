@@ -1,13 +1,19 @@
-/********** Div pour les formulaires, page : index.php et newaccount.php **********/
+/*--====================================================================================================================
+||  Author : Junod Alexandre                                                                                           ||
+||  Creation : 16.02.2018                                                                                              ||
+||  Summary : All the divs for the different pages of the poker online                                                 ||
+||====================================================================================================================-*/
 
-/* Englobe les autres div et les place au millieu de la page index.php */
+/********** Divs for the next pages : index.php and signup.php **********/
+
+/* Encompasses other divs and center in the middle of the page index.php */
 .FormContainerIndex{ 
     width: 400px;
     height: 400px;
     font-family: Arial, Helvetica, sans-serif;
     font-size: 18px;
     
-    /* Centrer la div au millieu de la page */
+    /* Center the div in the middle of the page */
     position:absolute;
     top:0;
     bottom: 0;
@@ -16,14 +22,14 @@
     margin: auto;
 }
 
-/* Englobe les autres div et les place au millieu de la page inscription.php */
-.FormContainerInscription{ 
+/* Encompasses other divs and center in the middle of the page signup.php */
+.FormContainerSignup{ 
     width: 700px;
     height: 400px;
     font-family: Arial, Helvetica, sans-serif;
     font-size: 18px;
     
-    /* Centrer la div au millieu de la page */
+    /* Center the div in the middle of the page */
     position:absolute;
     top:0;
     bottom: 0;
@@ -32,7 +38,7 @@
     margin: auto;
 }
 
-/* Contient le texte au dessus du formulaire */
+/* Contains the text above the form*/
 .FormTitle{
     font-family: "Arial Black", Gadget, sans-serif;
     font-size: 35px;
@@ -43,7 +49,7 @@
     height:15%;
 }
 
-/* Contient la bordure du formulaire */
+/* Contains the border of the form */
 .FormDesign{
     border: 2px solid;
     border-radius: 20px;
@@ -54,7 +60,7 @@
     height:75%;    
 }
 
-/* Contient les champs d'identification de la page index.php */
+/* Contains the input fields of the page index.php */
 .FormFieldsIndex{
     text-align: left;
     
@@ -65,8 +71,8 @@
     padding-top: 15%;
 }
 
-/* Contient les champs d'identification de la page inscription.php */
-.FormFieldsInscription{
+/* Contains the input fields of the page signup.php */
+.FormFieldsSignup{
     text-align: left;
     
     display: block;
@@ -77,8 +83,8 @@
     float: left;
 }
 
-/* Contient les contraintes de création de compte, page inscription.php */
-.FormContraintesInscription{
+/* Contains the the critereas of sign up, page signup.php */
+.FormCritereaSignup{
     text-align: left;
     color: red;
     
@@ -90,7 +96,7 @@
     float: right;
 }
 
-/* Contient le bouton */
+/* Contains the button */
 .FormButton{
     text-align: center;
     
@@ -101,7 +107,7 @@
     clear: left;
 }
 
-/* Contient le lien d'inscription */
+/* Contains the links */
 .FormLink{
     text-align: center;
     
@@ -111,28 +117,28 @@
     padding-top: 30px;
 }
 
-/* Contient les champ de texte pour le formulaire de la page index.php*/
+/* Input fields of the page index.php */
 #InputIndex{
     width:100%;
     font-size: 16px;    
 }
 
-/* Contient les champ de texte pour le formulaire de la page inscription.php*/
-#InputInscription{
+/* Input fields of the page inscription.php*/
+#InputSignup{
     width:90%;
     font-size: 16px;  
     float: left;
 }
 
-/********** Div pour la page : accueil.php **********/
+/********** Div for the page home.php **********/
 
-.ContainerAccueil{ 
+.ContainerHome{ 
     width: 123px;
     height: 50px;
     font-family: Arial, Helvetica, sans-serif;
     font-size: 18px;
     
-    /* Centrer la div au millieu de la page */
+    /* Center the div in the middle of the page */
     position:absolute;
     top:0;
     bottom: 0;
@@ -141,10 +147,10 @@
     margin: auto;
 }
 
-/********** Div pour la page : table.php **********/
+/********** Divs for the page table.php **********/
 
-/* Place du joueur numéro 1 */
-.Joueur1{ 
+/* Place of the player number 1 */
+.SeatPlayer1{ 
     width: 150px;
     height: 150px;
     font-family: Arial, Helvetica, sans-serif;
@@ -160,8 +166,8 @@
     margin: auto
 }
 
-/* Place du joueur numéro 2 */
-.Joueur2{ 
+/* Place of the player number 2 */
+.SeatPlayer2{ 
     width: 150px;
     height: 150px;
     font-family: Arial, Helvetica, sans-serif;
@@ -177,8 +183,8 @@
     margin: auto
 }
 
-/* Place du joueur numéro 3 */
-.Joueur3{ 
+/* Place of the player number 3 */
+.SeatPlayer3{ 
     width: 150px;
     height: 150px;
     font-family: Arial, Helvetica, sans-serif;
@@ -194,8 +200,8 @@
     margin: auto
 }
 
-/* Place du joueur numéro 4 */
-.Joueur4{ 
+/* Place of the player number 4 */
+.SeatPlayer4{ 
     width: 150px;
     height: 150px;
     font-family: Arial, Helvetica, sans-serif;
@@ -211,8 +217,8 @@
     margin: auto
 }
 
-/* Place du joueur numéro 5 */
-.Joueur5{ 
+/* Place of the player number 5 */
+.SeatPlayer5{ 
     width: 150px;
     height: 150px;
     font-family: Arial, Helvetica, sans-serif;
@@ -228,8 +234,8 @@
     margin: auto
 }
 
-/* Place du joueur numéro 6 */
-.Joueur6{ 
+/* Place of the player number 6 */
+.SeatPlayer6{ 
     width: 150px;
     height: 150px;
     font-family: Arial, Helvetica, sans-serif;
@@ -245,8 +251,8 @@
     margin: auto
 }
 
-/* Jeton Dealer/Big Blind/Small Blind du joueur numéro 1 */
-.Jeton1{ 
+/* Token dealer, big blind and small blind of the player number 1 */
+.TokenPlayer1{ 
     z-index: 1;
     width: 30px;
     height: 30px;
@@ -263,8 +269,8 @@
     margin: auto
 }
 
-/* Jeton Dealer/Big Blind/Small Blind du joueur numéro 2 */
-.Jeton2{ 
+/* Token dealer, big blind and small blind of the player number 2 */
+.TokenPlayer2{ 
     z-index: 1;
     width: 30px;
     height: 30px;
@@ -281,8 +287,8 @@
     margin: auto
 }
 
-/* Jeton Dealer/Big Blind/Small Blind du joueur numéro 3 */
-.Jeton3{ 
+/* Token dealer, big blind and small blind of the player number 3 */
+.TokenPlayer3{ 
     z-index: 1;
     width: 30px;
     height: 30px;
@@ -299,8 +305,8 @@
     margin: auto
 }
 
-/* Jeton Dealer/Big Blind/Small Blind du joueur numéro 4 */
-.Jeton4{ 
+/* Token dealer, big blind and small blind of the player number 4 */
+.TokenPlayer4{ 
     z-index: 1;
     width: 30px;
     height: 30px;
@@ -317,8 +323,8 @@
     margin: auto
 }
 
-/* Jeton Dealer/Big Blind/Small Blind du joueur numéro 5 */
-.Jeton5{ 
+/* Token dealer, big blind and small blind of the player number 5 */
+.TokenPlayer5{ 
     z-index: 1;
     width: 30px;
     height: 30px;
@@ -335,8 +341,8 @@
     margin: auto
 }
 
-/* Jeton Dealer/Big Blind/Small Blind du joueur numéro 6 */
-.Jeton6{ 
+/* Token dealer, big blind and small blind of the player number 6 */
+.TokenPlayer6{ 
     z-index: 1;
     width: 30px;
     height: 30px;
@@ -353,15 +359,15 @@
     margin: auto
 }
 
-/********** Div pour toutes les pages **********/
+/********** Divs for all the pages **********/
 
 body{
     background-size: cover;
 }
 
-/* Contient le pseudo du joueur et le bouton de déconnexion, dans la page : accueil.php*/
-/* Contient le pseudo du joueur, l'argent du joueur et le bouton se lever, dans la page : table.php*/
-.InfosJoueur{
+/* Contains the pseudo of the player and the button of sign out, in the page home.php*/
+/* Contains the pseudo, the money of the player and the button get up, in the page table.php*/
+.InfosPlayer{
     font-family: Arial, Helvetica, sans-serif;
     font-size: 18px;
     color: white;
@@ -386,7 +392,7 @@ body{
     text-align: center;
 }
 
-/********* Div temporaire, pour des boutons *********/
+/********* Temporary div for the buttons *********/
 
 .Button{
     width: 400px;
@@ -395,7 +401,7 @@ body{
     font-size: 18px;
     background-color: grey;
     
-    /* Centrer la div au millieu de la page */
+    /* Center the div in the middle of the page */
     position:absolute;
     top:0;
     bottom: 0;

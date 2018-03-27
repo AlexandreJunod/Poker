@@ -1,51 +1,51 @@
 <!--====================================================================================================================
-||  Auteur : Junod Alexandre                                                                                           ||
-||  Derniere modification : 06.03.2018                                                                                 ||
-||  Résumé : Page de connexion, le joueur peut se connecter a l'aide de son compte où aller sur la page d'inscription  ||
+||  Author : Junod Alexandre                                                                                           ||
+||  Creation : 16.02.2018                                                                                              ||
+||  Summary : First page displayed to the user. The player can connect with his account or go to the page signup       ||
 ||====================================================================================================================-->
 
 <?php
-//----------------------------- Démarrage SESSION ----------------------------------------
+//----------------------------- Start SESSION ----------------------------------------
 
 session_start();
-require_once("includes/fonctions.php");
+require_once("includes/functions.php");
 ConnectDB();
 
-//----------------------------- Traitement POST ------------------------------------------
+//----------------------------- Processing POST ------------------------------------------
 
-if(isset($_POST['PseudoForm'])) //Données reçues par le formulaire rempli par l'utilisateur
+if(isset($_POST['PseudoForm'])) //Check if datas were received by the form
 {
-    $Pseudo = $_POST['PseudoForm']; // Contient le pseudo rentré par l'utilisateur
-    $MotDePasse = $_POST['MotDePasseForm']; // Contient le mot de passe rentré par l'utilisateur
+    $Pseudo = $_POST['PseudoForm']; //Pseudo gived by the user who tries to log in
+    $Password = $_POST['PasswordForm']; //Password gived by the user who tries to log in
     
-    //Récupére le mot de passe haché pour le pseudo selectionné.
-    $query = "SELECT idJoueur, PseudoJoueur, MotDePasseJoueur, PASSWORD('$MotDePasse') as HashPassword FROM poker.joueur WHERE PseudoJoueur = '$Pseudo'";
-    $connexions = $dbh->query($query) or die ("SQL Error in:<br> $query <br>Error message:".$dbh->errorInfo()[2]);
+    //Takes the hash password of the pseudo gived by the user
+    $query = "SELECT idPlayer, PseudoPlayer, PasswordPlayer, PASSWORD('$Password') as HashPassword FROM poker.player WHERE PseudoPlayer = '$Pseudo'";
+    $Logins = $dbh->query($query) or die ("SQL Error in:<br> $query <br>Error message:".$dbh->errorInfo()[2]);
         
-    if($connexions->rowCount() > 0) //S'assure que le pseudo existe
+    if($Logins->rowCount() > 0) //If datas are returned, the pseudo exists
     {
-        $connexion = $connexions->fetch(); //fetch -> aller chercher
-        extract($connexion); //$idJoueurs, $PseudoJoueurs, $MotDePasse, $HashPassword
+        $Login = $Logins->fetch(); //fetch
+        extract($Login); //$idPlayer, $PseudoPlayer, $PasswordPlayer, $HashPassword
         
-        if($MotDePasseJoueur == $HashPassword) //Compare le mot de passe haché dans le base de donnée avec le mot de passe haché que l'utilisateur a entré
+        if($PasswordPlayer == $HashPassword) //Check if the password gived by the user is the same than the password hashed of the data base
         {
-            $_SESSION['Pseudo'] = $Pseudo;
-            header('Location: table.php');
+            $_SESSION['Pseudo'] = $Pseudo; //Save the pseudo of the user in a SESSION
+            header('Location: table.php'); //The user is redirected to a table
         }        
         else
         {
             echo "<div class='ErrorMsg'>Le mot de passe est erroné</div>";
         }
     } 
-    else //Le pseudo n'a pas été trouver
+    else //No datas were returned, the pseudo was not find
     {
         echo "<div class='ErrorMsg'>Le pseudo est erroné</div>";
     }
 }
 
-// QUE DU PHP JUSQU'ICI
-//----------------------------- Génération de la page-------------------------------------
-// HTML + PHP depuis ici
+// ONLY PHP UP UNTIL NOW
+//----------------------------- Generation of the page-------------------------------------
+// HTML + PHP FROM HERE
 
 ?>
 <!DOCTYPE html>
@@ -59,10 +59,10 @@ if(isset($_POST['PseudoForm'])) //Données reçues par le formulaire rempli par 
         <div class="FormContainerIndex">
             <div class="FormTitle">Connexion</div>
             <div class="FormDesign">
-                <div class="FormFieldsIndex"><form method="post" id="FormConnexion">Pseudo<input type="text" id="InputIndex" name="PseudoForm" minlength="6" maxlength="13" required autofocus><br><br><br>Mot de passe<input type="password" id="InputIndex" name="MotDePasseForm" minlength="6" required></form><br></div>
-                <div class="FormButton"><button type="submit" form="FormConnexion" name="Connexion">Connexion</button></div>
+                <div class="FormFieldsIndex"><form method="post" id="FormLogin">Pseudo<input type="text" id="InputIndex" name="PseudoForm" minlength="6" maxlength="13" required autofocus><br><br><br>Mot de passe<input type="password" id="InputIndex" name="PasswordForm" minlength="6" required></form><br></div>
+                <div class="FormButton"><button type="submit" form="FormLogin" name="Login">Connexion</button></div>
             </div>
-            <div class="FormLink"><a href="inscription.php">Pas encore de compte ? Inscrivez-vous !</a></div>
+            <div class="FormLink"><a href="signup.php">Pas encore de compte ? Inscrivez-vous !</a></div>
         </div>
     </body>
 </html>
