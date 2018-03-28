@@ -5,7 +5,7 @@
 ||====================================================================================================================-->
 
 <?php
-//----------------------------- Start SESSION ----------------------------------------
+//----------------------------- Start SESSION --------------------------------------------
 
 session_start();
 require_once("includes/functions.php");
@@ -24,7 +24,7 @@ if(isset($_POST['PseudoForm'])) //Check if datas were received by the form
         
     if($Logins->rowCount() > 0) //If datas are returned, the pseudo exists
     {
-        $Login = $Logins->fetch(); //fetch
+        $Login = $Logins->fetch();
         extract($Login); //$idPlayer, $PseudoPlayer, $PasswordPlayer, $HashPassword
         
         if($PasswordPlayer == $HashPassword) //Check if the password gived by the user is the same than the password hashed of the data base

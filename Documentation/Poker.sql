@@ -26,6 +26,7 @@ CREATE TABLE IF NOT EXISTS Poker.Seat (
   idSeat INT(11) NOT NULL AUTO_INCREMENT,
   MoneySeat INT(11) NULL DEFAULT NULL,
   HandSeat VARCHAR(45) NULL DEFAULT NULL,
+  OrderSeat INT(11) NULL DEFAULT NULL,
   fkGameSeat INT(11) NOT NULL,
   fkStatusSeat INT(11) NOT NULL,
   fkPlayerSeat INT(11) NULL DEFAULT NULL,
@@ -33,6 +34,7 @@ CREATE TABLE IF NOT EXISTS Poker.Seat (
   INDEX fk_Seat_Game1_idx (fkGameSeat ASC),
   INDEX fk_Seat_Status1_idx (fkStatusSeat ASC),
   INDEX fk_Seat_Player1_idx (fkPlayerSeat ASC),
+  UNIQUE INDEX OrderSeat_UNIQUE (OrderSeat ASC),
   UNIQUE INDEX fkPlayerSeat_UNIQUE (fkPlayerSeat ASC),
   CONSTRAINT fk_Seat_Game1
     FOREIGN KEY (fkGameSeat)
@@ -58,7 +60,6 @@ CREATE TABLE IF NOT EXISTS Poker.Game (
   BoardGame VARCHAR(45) NULL DEFAULT NULL,
   BlindGame INT(11) NULL DEFAULT NULL,
   DealerGame INT(11) NOT NULL DEFAULT '1',
-  OrderGame INT(11) NULL DEFAULT NULL,
   HourStartGame TIME NULL DEFAULT NULL,
   PRIMARY KEY (idGame))
 ENGINE = InnoDB

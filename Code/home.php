@@ -5,7 +5,7 @@
 ||====================================================================================================================-->
 
 <?php
-//----------------------------- Start SESSION ----------------------------------------
+//----------------------------- Start SESSION --------------------------------------------
 
 session_start();
 require_once("includes/functions.php");
@@ -34,10 +34,10 @@ if(isset($_POST['JoinTable'])) //Check if the user clicked on the button to join
 if(isset($_POST['Signout'])) //Check if the user clicked on the sign out button
 {
     unset($_SESSION); //Unset all the SESSIONS saved of the user
-    header('Location: index.php'); //The user is redirect to the log in page
+    header('Location: index.php'); //The user is redirected to the log in page
 }
 
-//----------------------------- Processing GET -------------------------------------------
+//----------------------------- Processing GET --------------------------------------------
 
 // ONLY PHP UP UNTIL NOW
 //----------------------------- Generation of the page-------------------------------------
@@ -62,7 +62,7 @@ if(isset($_POST['Signout'])) //Check if the user clicked on the sign out button
 </html>
 
 <?php
-//----------------------------- Saving SESSION ------------------------------------
+//----------------------------- Saving SESSION --------------------------------------------
 
 $_SESSION['Pseudo'] = $Pseudo;
 unset($_SESSION['Error']); //Unset the SESSION Error, to stop to show the massage at next refresh
