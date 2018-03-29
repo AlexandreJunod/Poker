@@ -149,8 +149,8 @@
 
 /********** Divs for the page table.php **********/
 
-/* Place of the player number 1 */
-.SeatPlayer1{ 
+/* Place of the player number 0 */
+.SeatPlayer0{ 
     width: 150px;
     height: 150px;
     font-family: Arial, Helvetica, sans-serif;
@@ -166,8 +166,8 @@
     margin: auto
 }
 
-/* Place of the player number 2 */
-.SeatPlayer2{ 
+/* Place of the player number 1 */
+.SeatPlayer1{ 
     width: 150px;
     height: 150px;
     font-family: Arial, Helvetica, sans-serif;
@@ -178,6 +178,23 @@
     position:absolute;
     top: 400;
     bottom: 0;
+    left: 0;
+    right: 1350;
+    margin: auto
+}
+
+/* Place of the player number 2 */
+.SeatPlayer2{ 
+    width: 150px;
+    height: 150px;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 18px;
+    background-color: black;
+    color: white;
+    
+    position:absolute;
+    top: 0;
+    bottom: 480;
     left: 0;
     right: 1350;
     margin: auto
@@ -194,31 +211,14 @@
     
     position:absolute;
     top: 0;
-    bottom: 480;
-    left: 0;
-    right: 1350;
-    margin: auto
-}
-
-/* Place of the player number 4 */
-.SeatPlayer4{ 
-    width: 150px;
-    height: 150px;
-    font-family: Arial, Helvetica, sans-serif;
-    font-size: 18px;
-    background-color: black;
-    color: white;
-    
-    position:absolute;
-    top: 0;
     bottom: 630;
     left: 0;
     right: 0;
     margin: auto
 }
 
-/* Place of the player number 5 */
-.SeatPlayer5{ 
+/* Place of the player number 4 */
+.SeatPlayer4{ 
     width: 150px;
     height: 150px;
     font-family: Arial, Helvetica, sans-serif;
@@ -234,8 +234,8 @@
     margin: auto
 }
 
-/* Place of the player number 6 */
-.SeatPlayer6{ 
+/* Place of the player number 5 */
+.SeatPlayer5{ 
     width: 150px;
     height: 150px;
     font-family: Arial, Helvetica, sans-serif;
@@ -251,8 +251,8 @@
     margin: auto
 }
 
-/* Token dealer, big blind and small blind of the player number 1 */
-.TokenPlayer1{ 
+/* Token dealer, big blind and small blind of the player number 0 */
+.TokenPlayer0{ 
     z-index: 1;
     width: 30px;
     height: 30px;
@@ -269,8 +269,8 @@
     margin: auto
 }
 
-/* Token dealer, big blind and small blind of the player number 2 */
-.TokenPlayer2{ 
+/* Token dealer, big blind and small blind of the player number 1 */
+.TokenPlayer1{ 
     z-index: 1;
     width: 30px;
     height: 30px;
@@ -287,8 +287,8 @@
     margin: auto
 }
 
-/* Token dealer, big blind and small blind of the player number 3 */
-.TokenPlayer3{ 
+/* Token dealer, big blind and small blind of the player number 2 */
+.TokenPlayer2{ 
     z-index: 1;
     width: 30px;
     height: 30px;
@@ -305,8 +305,8 @@
     margin: auto
 }
 
-/* Token dealer, big blind and small blind of the player number 4 */
-.TokenPlayer4{ 
+/* Token dealer, big blind and small blind of the player number 3 */
+.TokenPlayer3{ 
     z-index: 1;
     width: 30px;
     height: 30px;
@@ -323,8 +323,8 @@
     margin: auto
 }
 
-/* Token dealer, big blind and small blind of the player number 5 */
-.TokenPlayer5{ 
+/* Token dealer, big blind and small blind of the player number 4 */
+.TokenPlayer4{ 
     z-index: 1;
     width: 30px;
     height: 30px;
@@ -341,8 +341,8 @@
     margin: auto
 }
 
-/* Token dealer, big blind and small blind of the player number 6 */
-.TokenPlayer6{ 
+/* Token dealer, big blind and small blind of the player number 5 */
+.TokenPlayer5{ 
     z-index: 1;
     width: 30px;
     height: 30px;

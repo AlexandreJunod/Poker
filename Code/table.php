@@ -22,20 +22,7 @@ if(isset($_SESSION['Pseudo'])) //Recover the pseudo of the user saved on the SES
 } 
 else //The user isn't logged
 {
-    header('Location: index.php'); //The user is redirect to the log in page
-}
-
-//----------------------------- Processing POST ------------------------------------------
-
-
-if(isset($_POST['Getup'])) //Check if the user clicked on the get up button
-{
-    header('Location: home.php'); //The user is redirect to the home
-}
-
-if(isset($_POST['NextHand'])) //Check if the user clicked to go to the next hand
-{    
-    header('Location: table.php'); //Prevent to send the form in a loop
+    header('Location: index.php'); //The user is redirected to the log in page
 }
 
 //----------------------------- SQL REQUEST ----------------------------------------------
@@ -52,6 +39,20 @@ $FreePositions = $dbh->query($query) or die ("SQL Error in:<br> $query <br>Error
 $query = "SELECT COUNT(fkGameSeat) AS NbFreeSeats FROM poker.seat WHERE fkPlayerSeat IS NULL";
 $FreeSeats = $dbh->query($query) or die ("SQL Error in:<br> $query <br>Error message:".$dbh->errorInfo()[2]);
 
+//Used to show the players, pseudo, money, bets, hand and take the order
+$query = "SELECT PseudoPlayer, MoneySeat, BetSeat, HandSeat, OrderSeat FROM poker.player INNER JOIN poker.seat ON player.idPlayer = seat.fkPlayerSeat";
+$ShowPlayers = $dbh->query($query) or die ("SQL Error in:<br> $query <br>Error message:".$dbh->errorInfo()[2]);
+
+//----------------------------- PHP  ------------------------------------------------------
+
+if($FreeSeats->rowCount() > 0) //Check if there is free seats
+{
+    $FreeSeat = $FreeSeats->fetch();
+    extract($FreeSeat); //$NbFreeSeats
+    
+    echo "<div class='ErrorMsg'>En attente de $NbFreeSeats joueurs</div>"; //Show how many free seats are available
+}
+
 if($InfoPlayers->rowCount() > 0) //Check if informations about the user were returned
 {
     $InfoPlayer = $InfoPlayers->fetch();
@@ -64,9 +65,7 @@ else //There is no informations, the player isn't on the table
     {
         $FreePosition = $FreePositions->fetch();
         extract($FreePosition); //$idSeat
-        $FreeSeat = $FreeSeats->fetch();
-        extract($FreeSeat); //$NbFreeSeats
-        
+                
         $OrderSeatGiven = $NbTotalSeats - $NbFreeSeats; //The user takes everytime the first place available. The number total of seats minus the number of seats free gives the order
 
         //Gives the money, a seat and an order to the player
@@ -82,7 +81,54 @@ else //There is no informations, the player isn't on the table
     }
 }
 
+$PersonnalView = 6 - $OrderSeat; //6 less the seat where i am, is the number of times i've to change place to be at first place. $OrderSeat comes from $InfoPlayers
 
+if($ShowPlayers->rowCount() > 0) //Check if there is players to show
+{
+    foreach($ShowPlayers as $ShowPlayer)
+    {
+        $ShowPseudoPlayer = $ShowPlayer['PseudoPlayer'];
+        $ShowMoneySeat = $ShowPlayer['MoneySeat'];
+        $ShowBetSeat = $ShowPlayer['BetSeat']; //NOT ALREADY USED. CREATE DIVS
+        $ShowHandSeat = $ShowPlayer['HandSeat']; //NOT ALREADY USED. CREATE DIVS
+        $ShowOrderSeat = $ShowPlayer['OrderSeat'];
+        
+        $ShowMoneySeat = number_format ($ShowMoneySeat, $decimals = 0, $dec_point = ".", $thousands_sep = "'" ); //Number format, for distinguish easier the thousands
+        $ShowOrderSeat = ($ShowOrderSeat + $PersonnalView)%6; //Makes the player go to the first place. %6 do the number come back at 0 when he is at 6
+        
+        echo "<div class='SeatPlayer$ShowOrderSeat'>$ShowPseudoPlayer<br>$ShowMoneySeat</div>"; //Affiche les joueurs
+    }
+}
+
+//----------------------------- Processing POST ------------------------------------------
+
+if(isset($_POST['Getup'])) //Check if the user clicked on the get up button
+{
+    //Select the order of all the seats with an higher number than the user who leaves the table
+    $query = "SELECT OrderSeat FROM poker.seat WHERE OrderSeat > '$OrderSeat'"; //We got $OrderSeat by the sql request $InfoPlayers
+    $AfterMePlayers = $dbh->query($query) or die ("SQL Error in:<br> $query <br>Error message:".$dbh->errorInfo()[2]);
+    
+    //Delete the informations on the seat, about the user who is leaving the table
+    $query = "UPDATE poker.seat SET MoneySeat = NULL, HandSeat = NULL, OrderSeat = NULL, fkPlayerSeat = NULL WHERE OrderSeat = '$OrderSeat'"; //We got $OrderSeat by the sql request $InfoPlayers
+    $dbh->query($query) or die ("SQL Error in:<br> $query <br>Error message:".$dbh->errorInfo()[2]);
+    
+    foreach($AfterMePlayers as $AfterMePlayer) //Change the number of the OrderSeat one by one, but conserves the real order of playing
+    {
+        $AfterMeSeat = $AfterMePlayer['OrderSeat']; //Takes the order of a seat after me
+        $AfterMeNewSeat = $AfterMeSeat - 1; //The new order is equal at the order of a player after me less 1
+        
+        //Update the order of the players after me. 
+        $query = "UPDATE poker.seat SET OrderSeat = '$AfterMeNewSeat' WHERE OrderSeat = '$AfterMeSeat'";
+        $dbh->query($query) or die ("SQL Error in:<br> $query <br>Error message:".$dbh->errorInfo()[2]);
+    }
+    
+    header('Location: home.php'); //The user is redirected to the home
+}
+
+if(isset($_POST['NextHand'])) //Check if the user clicked to go to the next hand
+{
+    header('Location: table.php'); //Prevent to send the form in a loop
+}
 
 
 // ONLY PHP UP UNTIL NOW
