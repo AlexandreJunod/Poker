@@ -50,7 +50,16 @@ if($FreeSeats->rowCount() > 0) //Check if there is free seats
     $FreeSeat = $FreeSeats->fetch();
     extract($FreeSeat); //$NbFreeSeats
     
-    echo "<div class='ErrorMsg'>En attente de $NbFreeSeats joueurs</div>"; //Show how many free seats are available
+    if($NbFreeSeats >= 1) //Check if the game has started
+    {
+        echo "<div class='ErrorMsg'>En attente de $NbFreeSeats joueurs</div>"; //Show how many free seats are available
+    }
+    else //The game starts
+    {
+        //All the status of the seats are updated to "In Game"
+        $query = "UPDATE poker.seat SET fkStatusSeat='2' WHERE fkGameSeat='1'";
+        $dbh->query($query) or die ("SQL Error in:<br> $query <br>Error message:".$dbh->errorInfo()[2]);
+    }
 }
 
 if($InfoPlayers->rowCount() > 0) //Check if informations about the user were returned
@@ -94,7 +103,7 @@ if($ShowPlayers->rowCount() > 0) //Check if there is players to show
         $ShowOrderSeat = $ShowPlayer['OrderSeat'];
         
         $ShowMoneySeat = number_format ($ShowMoneySeat, $decimals = 0, $dec_point = ".", $thousands_sep = "'" ); //Number format, for distinguish easier the thousands
-        $ShowOrderSeat = ($ShowOrderSeat + $PersonnalView)%6; //Makes the player go to the first place. %6 do the number come back at 0 when he is at 6
+        $ShowOrderSeat = ($ShowOrderSeat + $PersonnalView)%6; //Make the player go to the first place. %6 do the number come back at 0 when he is at 6
         
         echo "<div class='SeatPlayer$ShowOrderSeat'>$ShowPseudoPlayer<br>$ShowMoneySeat</div>"; //Affiche les joueurs
     }
