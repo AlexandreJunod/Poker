@@ -20,8 +20,17 @@ if(isset($_SESSION['Pseudo'])) //Recover the pseudo of the user saved on the SES
 
 if(isset($_SESSION['Error'])) //Error massage, if the user joined a table full or in game
 {
-    echo "<div class='ErrorMsg'>Partie en cours, veuillez ressayer plus tard</div>";
-    echo "<script>setInterval(function(){location.reload()},2000);</script>"; //Refresh the page. Code gived by my projet manager
+    $ShowError = $_SESSION['Error'];
+    if($ShowError == 1)
+    {
+            echo "<div class='ErrorMsg'>Partie en cours, veuillez ressayer plus tard</div>";
+            echo "<script>setInterval(function(){location.reload()},2000);</script>"; //Refresh the page. Code gived by my project manager
+    }
+    else if($ShowError == 2)
+    {
+        echo "<div class='ErrorMsg'>Tu as été éliminé</div>";
+        echo "<script>setInterval(function(){location.reload()},2000);</script>"; //Refresh the page. Code gived by my project manager
+    }
 }
 
 //----------------------------- Processing POST ------------------------------------------
