@@ -89,9 +89,11 @@ SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
 
 INSERT INTO poker.Game (PotGame, BlindGame) VALUES ('0', '3000');
-INSERT INTO poker.Status (DescriptionStatus) VALUES ('Waiting');
-INSERT INTO poker.Status (DescriptionStatus) VALUES ('In game');
-INSERT INTO poker.Status (DescriptionStatus) VALUES ('Playing');
+INSERT INTO poker.Status (idStatus, DescriptionStatus) VALUES ('1', 'Waiting');
+INSERT INTO poker.Status (idStatus, DescriptionStatus) VALUES ('2', 'In game');
+INSERT INTO poker.Status (idStatus, DescriptionStatus) VALUES ('3', 'Playing');
+INSERT INTO poker.Status (idStatus, DescriptionStatus) VALUES ('4', 'Bet a blind');
+INSERT INTO poker.Status (idStatus, DescriptionStatus) VALUES ('99', 'Eliminated');
 INSERT INTO poker.Seat (fkGameSeat, fkStatusSeat) VALUES ('1', '1');
 INSERT INTO poker.Seat (fkGameSeat, fkStatusSeat) VALUES ('1', '1');
 INSERT INTO poker.Seat (fkGameSeat, fkStatusSeat) VALUES ('1', '1');
