@@ -135,7 +135,7 @@ if($ShowPlayers->rowCount() > 0) //Check if there is players to show
     {
         $ShowPseudoPlayer = $ShowPlayer['PseudoPlayer'];
         $ShowMoneySeat = $ShowPlayer['MoneySeat'];
-        $ShowBetSeat = $ShowPlayer['BetSeat'];
+        $ShowBetSeat = $ShowPlayer['BetSeat']; //NOT ALREADY USED. CREATE DIVS
         $ShowHandSeat = $ShowPlayer['HandSeat']; //NOT ALREADY USED. CREATE DIVS
         $ShowOrderSeat = $ShowPlayer['OrderSeat'];
         $ShowfkPlayerSeat = $ShowPlayer['fkPlayerSeat'];
@@ -147,8 +147,6 @@ if($ShowPlayers->rowCount() > 0) //Check if there is players to show
             <form method='post' id='EliminateForm'></form>
             <button type='submit' form='EliminateForm' name='Eliminate' value='$ShowfkPlayerSeat'>Eliminer</button>
         </div>"; //Show the players
-        
-        echo "<div class='BetPlayer$ShowOrderSeat'>$ShowBetSeat</div>";
     }
 }
 
@@ -173,20 +171,18 @@ if($ShowDealers->rowCount() > 0) //Check if there is a dealer to show
     echo "<div class='TokenPlayer$ShowDealerGame'>D</div>"; //Show the dealer
 }
 
-
 if($PayTheBlinds->rowCount() > 0) //Check if some one have to pay the small blind
 {
     //Bet automatically the money of the small blind
-    $query = "UPDATE poker.seat SET MoneySeat = MoneySeat-'$BetSmallBlind', BetSeat = '$BetSmallBlind', fkStatusSeat = '2' WHERE OrderSeat = '$WhereIsTheSmallBlind'";
+    $query = "UPDATE poker.seat SET MoneySeat = MoneySeat-'$BetSmallBlind', BetSeat = BetSeat+'$BetSmallBlind', fkStatusSeat = '2' WHERE OrderSeat = '$WhereIsTheSmallBlind'";
     $dbh->query($query) or die ("SQL Error in:<br> $query <br>Error message:".$dbh->errorInfo()[2]); 
     
     //Bet automatically the money of the big blind
-    $query = "UPDATE poker.seat SET MoneySeat = MoneySeat-'$BetBigBlind', BetSeat = '$BetBigBlind', fkStatusSeat = '2' WHERE OrderSeat = '$WhereIsTheBigBlind'";
+    $query = "UPDATE poker.seat SET MoneySeat = MoneySeat-'$BetBigBlind', BetSeat = BetSeat+'$BetBigBlind', fkStatusSeat = '2' WHERE OrderSeat = '$WhereIsTheBigBlind'";
     $dbh->query($query) or die ("SQL Error in:<br> $query <br>Error message:".$dbh->errorInfo()[2]);
     
-    //header('Location: table.php'); //Refresh the page, for show immediatly the bet
+    header('Location: table.php'); //Refresh the page, for show immediatly the bet
 }
-
 
 if($EliminatePlayers->rowCount() > 0) //Check if a user is eliminated
 {
