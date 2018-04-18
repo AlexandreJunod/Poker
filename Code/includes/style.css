@@ -251,6 +251,108 @@
     margin: auto
 }
 
+/* Amount bet by the player number 0 */
+.BetPlayer0{ 
+    width: 150px;
+    height: 36px;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 18px;
+    background-color: black;
+    color: white;
+    
+    position:absolute;
+    top: 350;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    margin: auto
+}
+
+/* Amount bet by the player number 1 */
+.BetPlayer1{ 
+    width: 150px;
+    height: 36px;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 18px;
+    background-color: black;
+    color: white;
+    
+    position:absolute;
+    top: 200;
+    bottom: 0;
+    left: 0;
+    right: 1150;
+    margin: auto
+}
+
+/* Amount bet by the player number 2 */
+.BetPlayer2{ 
+    width: 150px;
+    height: 36px;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 18px;
+    background-color: black;
+    color: white;
+    
+    position:absolute;
+    top: 0;
+    bottom: 280;
+    left: 0;
+    right: 1150;
+    margin: auto
+}
+
+/* Amount bet by the player number 3 */
+.BetPlayer3{ 
+    width: 150px;
+    height: 36px;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 18px;
+    background-color: black;
+    color: white;
+    
+    position:absolute;
+    top: 0;
+    bottom: 430;
+    left: 0;
+    right: 0;
+    margin: auto
+}
+
+/* Amount bet by the player number 4 */
+.BetPlayer4{ 
+    width: 150px;
+    height: 36px;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 18px;
+    background-color: black;
+    color: white;
+    
+    position:absolute;
+    top: 0;
+    bottom: 280;
+    left: 1150;
+    right: 0;
+    margin: auto
+}
+
+/* Amount bet by the player number 5 */
+.BetPlayer5{ 
+    width: 150px;
+    height: 36px;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 18px;
+    background-color: black;
+    color: white;
+    
+    position:absolute;
+    top: 200;
+    bottom: 0;
+    left: 1150;
+    right: 0;
+    margin: auto
+}
+
 /* Token dealer, big blind and small blind of the player number 0 */
 .TokenPlayer0{ 
     z-index: 1;
@@ -355,6 +457,41 @@
     top: 400;
     bottom: 0;
     left: 1500;
+    right: 0;
+    margin: auto
+}
+
+/* Show the amount of money on the pot */
+.Pot{ 
+    z-index: 1;
+    width: 80px;
+    height: 40px;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 20px;
+    background-color: Black;
+    color: white;
+    
+    position:absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    margin: auto
+}
+
+/* Show the buttons for bet*/
+.BettingButtons{
+    width: 500px;
+    height: 75px;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 18px;
+    background-color: Black;
+    color: white;
+    
+    position:absolute;
+    top: 800;
+    bottom: 0;
+    left: 0;
     right: 0;
     margin: auto
 }
