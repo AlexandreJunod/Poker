@@ -1,7 +1,9 @@
 <!--====================================================================================================================
 ||  Author : Junod Alexandre                                                                                           ||
 ||  Creation : 02.03.2018                                                                                              ||
-||  Summary : This is the page where the users will play a poker game                                                  ||
+||  Summary : This is the page where the users will play a poker game. He actually can Call, All in and Drop. When the ||
+||            player isn't playing, he stills receiving the menu for play, because the game doesn't check if is        ||
+||            waiting next hand. The game doesn't work at less than 6 and need interaction of the user "Alexandre"     ||
 ||====================================================================================================================-->
 
 <?php
@@ -63,8 +65,6 @@ $EliminatePlayers = $dbh->query($query) or die ("SQL Error in:<br> $query <br>Er
 $query = "SELECT HourStartGame, PotGame FROM poker.game";
 $StartHours = $dbh->query($query) or die ("SQL Error in:<br> $query <br>Error message:".$dbh->errorInfo()[2]);
 
-//Check the status of the seats
-
 //----------------------------- PHP  ------------------------------------------------------
 
 if($FreeSeats->rowCount() > 0) //Check if there is free seats
@@ -74,6 +74,8 @@ if($FreeSeats->rowCount() > 0) //Check if there is free seats
     
     $StartHour = $StartHours->fetch();
     extract($StartHour); //$HourStartGame, $PotGame
+    
+    $PotGame = number_format ($PotGame, $decimals = 0, $dec_point = ".", $thousands_sep = "'" ); //Number format, for distinguish easier the thousands
     
     if($NbFreeSeats >= 1 && $HourStartGame == NULL) //Check if the game has started, show the message only if the game hasn't start yet
     {
@@ -100,6 +102,7 @@ if($InfoPlayers->rowCount() > 0) //Check if informations about the user were ret
 {
     $InfoPlayer = $InfoPlayers->fetch();
     extract($InfoPlayer); //$MoneySeat, $HandSeat, $OrderSeat, BetSeat
+    $BrutMoneySeat = $MoneySeat; //Keeps the amount of money of the player, without format edit
     $MoneySeat = number_format ($MoneySeat, $decimals = 0, $dec_point = ".", $thousands_sep = "'" ); //Number format, for distinguish easier the thousands
 }
 else //There is no informations, the player isn't on the table
@@ -134,7 +137,7 @@ if($InfoStatus->rowCount() > 0) //Check if informations about status were return
         case 3:
             echo "<div class='BettingButtons'><form method='post' id='BettingForm'></form>
             <button type='submit' form='BettingForm' name='Call'>Suivre</button>
-            <button type='submit' form='BettingForm' name='All in'>Tapis</button>
+            <button type='submit' form='BettingForm' name='AllIn'>Tapis</button>
             <button type='submit' form='BettingForm' name='Drop'>Se coucher</button>
             <br><form method='post' id='BettingForm2'></form>
             <input type='text' name='AmountRaised' required></input>
@@ -159,6 +162,7 @@ if($ShowPlayers->rowCount() > 0) //Check if there is players to show
         $PotValue = @$PotValue + $ShowBetSeat; //For know the value of the pot, we need to know the money beted by each player
         
         $ShowMoneySeat = number_format ($ShowMoneySeat, $decimals = 0, $dec_point = ".", $thousands_sep = "'" ); //Number format, for distinguish easier the thousands
+        $ShowBetSeat = number_format ($ShowBetSeat, $decimals = 0, $dec_point = ".", $thousands_sep = "'" ); //Number format, for distinguish easier the thousands
         $ShowOrderSeat = ($ShowOrderSeat + $PersonnalView)%$NbTotalSeats; //Make the player go to the first place. %$NbTotalSeats do the number come back at 0 when he is at the end of the last place of the table
         
         echo "<div class='SeatPlayer$ShowOrderSeat'>$ShowPseudoPlayer<br>$ShowMoneySeat
@@ -170,7 +174,6 @@ if($ShowPlayers->rowCount() > 0) //Check if there is players to show
     }
 }
 
-$TokensView = $NbTotalSeats; // - $NbFreeSeats; //The number total of seats less the number of seats free, tells wich places can take a token
 
 if($ShowDealers->rowCount() > 0) //Check if there is a dealer to show
 {
@@ -179,12 +182,13 @@ if($ShowDealers->rowCount() > 0) //Check if there is a dealer to show
     
     $BetSmallBlind = $BlindGame/2; //Select the amount of a small blind. $BlindGame comes from the query $ShowDealers
     $BetBigBlind = $BlindGame; //Select the amount of a big blind. $BlindGame comes from the query $ShowDealers
-    $WhereIsTheSmallBlind = ($DealerGame + 1)%$TokensView; //Select the place of the small blind
-    $WhereIsTheBigBlind = ($DealerGame + 2)%$TokensView; //Select the place of the big blind
-    
-    $ShowDealerGame = ($DealerGame + $PersonnalView)%$TokensView; //Add to the dealer, the number of rotations needed for keep the right vue, and do modulo who corresponds with the taken seats
-    $ShowSmallBlindGame = ($DealerGame + $PersonnalView + 1)%$TokensView;
-    $ShowBigBlindGame = ($DealerGame + $PersonnalView + 2)%$TokensView;
+    $WhereIsTheSmallBlind = ($DealerGame + 1)%$NbTotalSeats; //Select the place of the small blind
+    $WhereIsTheBigBlind = ($DealerGame + 2)%$NbTotalSeats; //Select the place of the big blind
+    $PlayerUnderTheGun = ($DealerGame + 3)%$NbTotalSeats; //Select the place of the first player who plays
+        
+    $ShowDealerGame = ($DealerGame + $PersonnalView)%$NbTotalSeats; //Add to the dealer, the number of rotations needed for keep the right vue, and do modulo who corresponds with the number of seats
+    $ShowSmallBlindGame = ($DealerGame + $PersonnalView + 1)%$NbTotalSeats;
+    $ShowBigBlindGame = ($DealerGame + $PersonnalView + 2)%$NbTotalSeats;
     
     echo "<div class='TokenPlayer$ShowBigBlindGame'>BB</div>"; //Show the big blind
     echo "<div class='TokenPlayer$ShowSmallBlindGame'>SB</div>"; //Show the small blind
@@ -199,6 +203,10 @@ if($PayTheBlinds->rowCount() > 0) //Check if some one have to pay the small blin
     
     //Bet automatically the money of the big blind
     $query = "UPDATE poker.seat SET MoneySeat = MoneySeat-'$BetBigBlind', BetSeat = BetSeat+'$BetBigBlind', fkStatusSeat = '2' WHERE OrderSeat = '$WhereIsTheBigBlind'";
+    $dbh->query($query) or die ("SQL Error in:<br> $query <br>Error message:".$dbh->errorInfo()[2]);
+    
+    //Update the status of one player, for get the bet buttons
+    $query = "UPDATE poker.seat SET fkStatusSeat = '3' WHERE OrderSeat = '$PlayerUnderTheGun'";
     $dbh->query($query) or die ("SQL Error in:<br> $query <br>Error message:".$dbh->errorInfo()[2]);
     
     header('Location: table.php'); //Refresh the page, for show immediatly the bet
@@ -247,6 +255,9 @@ if($EliminatePlayers->rowCount() > 0) //Check if a user is eliminated
         header('Location: home.php'); //The user is redirected to the home
     }
 }
+
+$PlayerBeforeMe = ($OrderSeat + $NbTotalSeats - 1) %$NbTotalSeats; //Add the number of players max modulo the number of players max, for don't get a negativ number. Modulo should be the number of players in the table, for prevent bugs when there is less than 6 players
+$PlayerAfterMe = ($OrderSeat + $NbTotalSeats + 1) %$NbTotalSeats; //The same than "$PlayerBeforeMe" but with a +1
 
 //----------------------------- Processing POST ------------------------------------------
 
@@ -304,9 +315,11 @@ if(isset($_POST['NextHand'])) //Check if the user clicked to go to the next hand
     
     if($PotValue != 0) //When there is a new hand, the money goes to the pot. In a real game the money is won by the players before a new hand. The bet of the players goes to 0.
     {
+        //Increment the pot 
         $query = "UPDATE poker.game SET PotGame = PotGame+'$PotValue'";
         $dbh->query($query) or die ("SQL Error in:<br> $query <br>Error message:".$dbh->errorInfo()[2]);
         
+        //All the bets goes to 0, because it's a new hand
         $query = "UPDATE poker.seat SET BetSeat = '0' WHERE fkGameSeat = '1'";
         $dbh->query($query) or die ("SQL Error in:<br> $query <br>Error message:".$dbh->errorInfo()[2]);
     }
@@ -325,10 +338,8 @@ if(isset($_POST['Eliminate'])) //Check if the user clicked on the eliminate butt
     header('Location: table.php'); //Prevent to send the form in a loop
 }
 
-if(isset($_POST['Call'])) //If the users call, he check the money of the player before him, less his money and put the difference
-{
-    $PlayerBeforeMe = ($OrderSeat + $NbTotalSeats - 1) %$NbTotalSeats; //Add the number of players max modulo the number of players max, for don't get a negativ number. Modulo should be the number of players in the table, for prevent bugs when there is less than 6 players
-    
+if(isset($_POST['Call'])) //If the users call, he check the money of the player before him, less his money, put the difference and next he tell to the next player he can play
+{    
     //Select the money beted by the player before me
     $query = "SELECT BetSeat as BetBeforeMe FROM poker.seat WHERE OrderSeat = '$PlayerBeforeMe'";
     $BeforeBets = $dbh->query($query) or die ("SQL Error in:<br> $query <br>Error message:".$dbh->errorInfo()[2]);
@@ -338,28 +349,47 @@ if(isset($_POST['Call'])) //If the users call, he check the money of the player 
     
     $MoneyForCall = $BetBeforeMe - $BetSeat; //How many is needed for call
     
+    //Takes the money needed for the call
     $query = "UPDATE poker.seat SET MoneySeat = MoneySeat-'$MoneyForCall', BetSeat = BetSeat+'$MoneyForCall', fkStatusSeat = '2' WHERE OrderSeat = '$OrderSeat'";
+    $dbh->query($query) or die ("SQL Error in:<br> $query <br>Error message:".$dbh->errorInfo()[2]);
+    
+    //Tell to the next player, he can play
+    $query = "UPDATE poker.seat SET fkStatusSeat = '3' WHERE OrderSeat = '$PlayerAfterMe'";
     $dbh->query($query) or die ("SQL Error in:<br> $query <br>Error message:".$dbh->errorInfo()[2]);
 
     header('Location: table.php'); //Prevent to send the form in a loop
 }
 
-if(isset($_POST['All in'])) //
+if(isset($_POST['AllIn'])) //If the users all in, he puts all the money on the table and wait the next hand, he tell to the next player he can play
+{
+    //Takes the money needed for the all in
+    $query = "UPDATE poker.seat SET MoneySeat = '0', BetSeat = '$BrutMoneySeat', fkStatusSeat = '5' WHERE OrderSeat = '$OrderSeat'";
+    $dbh->query($query) or die ("SQL Error in:<br> $query <br>Error message:".$dbh->errorInfo()[2]);
+    
+    //Tell to the next player, he can play
+    $query = "UPDATE poker.seat SET fkStatusSeat = '3' WHERE OrderSeat = '$PlayerAfterMe'";
+    $dbh->query($query) or die ("SQL Error in:<br> $query <br>Error message:".$dbh->errorInfo()[2]);
+    
+    header('Location: table.php'); //Prevent to send the form in a loop
+}
+
+if(isset($_POST['Drop'])) //If the users drop, he gives his cards, wait the next hand and he tell to the next player he can play
+{
+    //Takes the money needed for the all in
+    $query = "UPDATE poker.seat SET BetSeat = '0', fkStatusSeat = '5' WHERE OrderSeat = '$OrderSeat'";
+    $dbh->query($query) or die ("SQL Error in:<br> $query <br>Error message:".$dbh->errorInfo()[2]);
+    
+    //Tell to the next player, he can play
+    $query = "UPDATE poker.seat SET fkStatusSeat = '3' WHERE OrderSeat = '$PlayerAfterMe'";
+    $dbh->query($query) or die ("SQL Error in:<br> $query <br>Error message:".$dbh->errorInfo()[2]);
+    
+    header('Location: table.php'); //Prevent to send the form in a loop
+}
+
+if(isset($_POST['Raise'])) //The raise is not used for the moment, the refresh don't let the time to input money and next send the form. It can be used after adding ajax
 {
     
 }
-
-if(isset($_POST['Drop'])) //
-{
-    
-}
-
-if(isset($_POST['Raise'])) //
-{
-    
-}
-
-//echo "POST: "; print_r($_POST); echo "<br>";
 
 // ONLY PHP UP UNTIL NOW
 //----------------------------- Generation of the page-------------------------------------
