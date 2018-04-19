@@ -461,6 +461,91 @@
     margin: auto
 }
 
+/* Place of the player who plays number 0 */
+.SeatPlaying0{ 
+    width: 153px;
+    height: 153px;
+    background-color: Cyan;
+    
+    position:absolute;
+    top: 550;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    margin: auto
+}
+
+/* Place of the player who plays number 1 */
+.SeatPlaying1{ 
+    width: 153px;
+    height: 153px;
+    background-color: Cyan;
+    
+    position:absolute;
+    top: 400;
+    bottom: 0;
+    left: 0;
+    right: 1350;
+    margin: auto
+}
+
+/* Place of the player who plays number 2 */
+.SeatPlaying2{ 
+    width: 153px;
+    height: 153px;
+    background-color: Cyan;
+    
+    position:absolute;
+    top: 0;
+    bottom: 480;
+    left: 0;
+    right: 1350;
+    margin: auto
+}
+
+/* Place of the player who plays number 3 */
+.SeatPlaying3{ 
+    width: 153px;
+    height: 153px;
+    background-color: Cyan;
+    
+    position:absolute;
+    top: 0;
+    bottom: 630;
+    left: 0;
+    right: 0;
+    margin: auto
+}
+
+/* Place of the player who plays number 4 */
+.SeatPlaying4{ 
+    width: 153px;
+    height: 153px;
+    background-color: Cyan;
+    
+    position:absolute;
+    top: 0;
+    bottom: 480;
+    left: 1350;
+    right: 0;
+    margin: auto
+}
+
+/* Place of the player who plays number 5 */
+.SeatPlaying5{ 
+    width: 153px;
+    height: 153px;
+    background-color: Cyan;
+    
+    position:absolute;
+    top: 400;
+    bottom: 0;
+    left: 1350;
+    right: 0;
+    margin: auto
+}
+
+
 /* Show the amount of money on the pot */
 .Pot{ 
     z-index: 1;

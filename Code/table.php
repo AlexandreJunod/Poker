@@ -65,6 +65,14 @@ $EliminatePlayers = $dbh->query($query) or die ("SQL Error in:<br> $query <br>Er
 $query = "SELECT HourStartGame, PotGame FROM poker.game";
 $StartHours = $dbh->query($query) or die ("SQL Error in:<br> $query <br>Error message:".$dbh->errorInfo()[2]);
 
+//Select the bigger bet
+$query = "SELECT BetSeat as BetBeforeMe FROM poker.seat GROUP BY BetSeat DESC LIMIT 1";
+$BeforeBets = $dbh->query($query) or die ("SQL Error in:<br> $query <br>Error message:".$dbh->errorInfo()[2]);
+
+//Select the player playing, for show him
+$query = "SELECT OrderSeat as ShowWhoPlays FROM poker.seat WHERE fkStatusSeat = '3'";
+$WhoPlays = $dbh->query($query) or die ("SQL Error in:<br> $query <br>Error message:".$dbh->errorInfo()[2]);
+
 //----------------------------- PHP  ------------------------------------------------------
 
 if($FreeSeats->rowCount() > 0) //Check if there is free seats
@@ -122,7 +130,7 @@ else //There is no informations, the player isn't on the table
     }
     else //There is no free seats, or the game has started
     {
-        $_SESSION['Error'] = '1'; //Gives authorization to show an error, and tell to the user the table is full
+        $_SESSION['Error'] = 1; //Gives authorization to show an error, and tell to the user the table is full
         header('Location: home.php'); //The user is redirected to the home
     }
 }
@@ -134,19 +142,32 @@ if($InfoStatus->rowCount() > 0) //Check if informations about status were return
     
     //Switch for design wich action can the player do, the $fkStatusSeat comes from the $InfoPlayers request.
     switch ($fkStatusSeat){
-        case 3:
+        case 3: //Player can play
             echo "<div class='BettingButtons'><form method='post' id='BettingForm'></form>
             <button type='submit' form='BettingForm' name='Call'>Suivre</button>
             <button type='submit' form='BettingForm' name='AllIn'>Tapis</button>
             <button type='submit' form='BettingForm' name='Drop'>Se coucher</button>
             <br><form method='post' id='BettingForm2'></form>
-            <input type='text' name='AmountRaised' required></input>
+            <input type='text' name='AmountRaised' value='Pas fonctionnel' required></input>
             <button type='submit' form='BettingForm2' name='Raise'>Relancer</button></div>";
+            break;
+        case 5:
+            echo "<div class='ErrorMsg'>Attendez la prochain main</div>";
             break;
     }
 }
 
 $PersonnalView = $NbTotalSeats - $OrderSeat; //The number total of seats less the seat where I am, is the number of times I've to change place to be at first place. $OrderSeat comes from $InfoPlayers
+
+if($WhoPlays->rowCount() > 0)//Check if there is some one playing
+{
+    $WhoPlay = $WhoPlays->fetch();
+    extract($WhoPlay); //$ShowWhoPlays
+    
+    $ShowWhoPlays = ($ShowWhoPlays + $PersonnalView)%$NbTotalSeats; //Show for every one, who is the player playing
+    echo "<div class='SeatPlaying$ShowWhoPlays'></div>"; //Show the player playing
+    echo $ShowWhoPlays;
+}
 
 if($ShowPlayers->rowCount() > 0) //Check if there is players to show
 {
@@ -173,7 +194,6 @@ if($ShowPlayers->rowCount() > 0) //Check if there is players to show
         echo "<div class='BetPlayer$ShowOrderSeat'>$ShowBetSeat</div>"; //Show the bet of each player
     }
 }
-
 
 if($ShowDealers->rowCount() > 0) //Check if there is a dealer to show
 {
@@ -219,45 +239,10 @@ if($EliminatePlayers->rowCount() > 0) //Check if a user is eliminated
     
     if($OrderEliminatedPlayer == $OrderSeat) //Check if I am the player eliminated
     {
-        $_SESSION['Error'] = '2'; //Gives authorization to show an error, and tell to the user he is eliminated
-    
-        // Possible de rentrer dans le post getup, au lieu de refaire un copier coller ? Le OrderEliminatedPlayer peut être remplacer par $OrderSeat 
-        //==========================================================================================================================================================
-        //Select the order of all the seats with an higher number than the user who is eliminated
-        $query = "SELECT OrderSeat FROM poker.seat WHERE OrderSeat > '$OrderEliminatedPlayer'"; 
-        $AfterMePlayers = $dbh->query($query) or die ("SQL Error in:<br> $query <br>Error message:".$dbh->errorInfo()[2]);
-
-        //Delete the informations on the seat, about the user who is eliminated
-        $query = "UPDATE poker.seat SET MoneySeat = NULL, HandSeat = NULL, OrderSeat = NULL, fkPlayerSeat = NULL, fkStatusSeat = '2' WHERE OrderSeat = '$OrderEliminatedPlayer'";
-        $dbh->query($query) or die ("SQL Error in:<br> $query <br>Error message:".$dbh->errorInfo()[2]);
-
-        foreach($AfterMePlayers as $AfterMePlayer) //Change the number of the OrderSeat one by one, but conserves the real order of playing
-        {
-            $AfterMeSeat = $AfterMePlayer['OrderSeat']; //Takes the order of a seat after me
-            $AfterMeNewSeat = $AfterMeSeat - 1; //The new order is equal at the order of a player after me less 1
-
-            //Update the order of the players after me. 
-            $query = "UPDATE poker.seat SET OrderSeat = '$AfterMeNewSeat' WHERE OrderSeat = '$AfterMeSeat'";
-            $dbh->query($query) or die ("SQL Error in:<br> $query <br>Error message:".$dbh->errorInfo()[2]);
-        }
-        
-        if($NbFreeSeats >= 4) //The game has ended
-        {
-            //Set the seats in "Waiting"
-            $query = "UPDATE poker.seat SET fkStatusSeat = '1' WHERE fkStatusSeat != '1'";
-            $dbh->query($query) or die ("SQL Error in:<br> $query <br>Error message:".$dbh->errorInfo()[2]);
-
-            //Reset de dealer
-            $query = "UPDATE poker.game SET PotGame = '0', BoardGame = NULL, BlindGame = '3000', DealerGame = '0', HourStartGame = NULL";
-            $dbh->query($query) or die ("SQL Error in:<br> $query <br>Error message:".$dbh->errorInfo()[2]);
-        }
-        //==========================================================================================================================================================        
-        header('Location: home.php'); //The user is redirected to the home
+        $_SESSION['Error'] = 2; //Gives authorization to show an error, and tell to the user he is eliminated
+        $_POST['Getup'] = 1; //Gives a value to the post getup, for enter on the isset
     }
 }
-
-$PlayerBeforeMe = ($OrderSeat + $NbTotalSeats - 1) %$NbTotalSeats; //Add the number of players max modulo the number of players max, for don't get a negativ number. Modulo should be the number of players in the table, for prevent bugs when there is less than 6 players
-$PlayerAfterMe = ($OrderSeat + $NbTotalSeats + 1) %$NbTotalSeats; //The same than "$PlayerBeforeMe" but with a +1
 
 //----------------------------- Processing POST ------------------------------------------
 
@@ -339,11 +324,7 @@ if(isset($_POST['Eliminate'])) //Check if the user clicked on the eliminate butt
 }
 
 if(isset($_POST['Call'])) //If the users call, he check the money of the player before him, less his money, put the difference and next he tell to the next player he can play
-{    
-    //Select the money beted by the player before me
-    $query = "SELECT BetSeat as BetBeforeMe FROM poker.seat WHERE OrderSeat = '$PlayerBeforeMe'";
-    $BeforeBets = $dbh->query($query) or die ("SQL Error in:<br> $query <br>Error message:".$dbh->errorInfo()[2]);
-    
+{        
     $BeforeBet = $BeforeBets->fetch();
     extract($BeforeBet); //$BetBeforeMe
     
@@ -353,42 +334,58 @@ if(isset($_POST['Call'])) //If the users call, he check the money of the player 
     $query = "UPDATE poker.seat SET MoneySeat = MoneySeat-'$MoneyForCall', BetSeat = BetSeat+'$MoneyForCall', fkStatusSeat = '2' WHERE OrderSeat = '$OrderSeat'";
     $dbh->query($query) or die ("SQL Error in:<br> $query <br>Error message:".$dbh->errorInfo()[2]);
     
-    //Tell to the next player, he can play
-    $query = "UPDATE poker.seat SET fkStatusSeat = '3' WHERE OrderSeat = '$PlayerAfterMe'";
-    $dbh->query($query) or die ("SQL Error in:<br> $query <br>Error message:".$dbh->errorInfo()[2]);
-
-    header('Location: table.php'); //Prevent to send the form in a loop
+    $_POST['NextPlayerCanPlay'] = 1; //Gives a value to the post NextPlayerCanPlay, for enter on the isset
 }
 
 if(isset($_POST['AllIn'])) //If the users all in, he puts all the money on the table and wait the next hand, he tell to the next player he can play
 {
-    //Takes the money needed for the all in
+    //Takes the money needed for the all in and wait the next hand
     $query = "UPDATE poker.seat SET MoneySeat = '0', BetSeat = '$BrutMoneySeat', fkStatusSeat = '5' WHERE OrderSeat = '$OrderSeat'";
     $dbh->query($query) or die ("SQL Error in:<br> $query <br>Error message:".$dbh->errorInfo()[2]);
     
-    //Tell to the next player, he can play
-    $query = "UPDATE poker.seat SET fkStatusSeat = '3' WHERE OrderSeat = '$PlayerAfterMe'";
-    $dbh->query($query) or die ("SQL Error in:<br> $query <br>Error message:".$dbh->errorInfo()[2]);
-    
-    header('Location: table.php'); //Prevent to send the form in a loop
+    $_POST['NextPlayerCanPlay'] = 1; //Gives a value to the post NextPlayerCanPlay, for enter on the isset
 }
 
 if(isset($_POST['Drop'])) //If the users drop, he gives his cards, wait the next hand and he tell to the next player he can play
 {
-    //Takes the money needed for the all in
+    //The player give everything he has, and wait the next hand
     $query = "UPDATE poker.seat SET BetSeat = '0', fkStatusSeat = '5' WHERE OrderSeat = '$OrderSeat'";
     $dbh->query($query) or die ("SQL Error in:<br> $query <br>Error message:".$dbh->errorInfo()[2]);
     
-    //Tell to the next player, he can play
-    $query = "UPDATE poker.seat SET fkStatusSeat = '3' WHERE OrderSeat = '$PlayerAfterMe'";
-    $dbh->query($query) or die ("SQL Error in:<br> $query <br>Error message:".$dbh->errorInfo()[2]);
-    
-    header('Location: table.php'); //Prevent to send the form in a loop
+    $_POST['NextPlayerCanPlay'] = 1; //Gives a value to the post NextPlayerCanPlay, for enter on the isset
 }
 
 if(isset($_POST['Raise'])) //The raise is not used for the moment, the refresh don't let the time to input money and next send the form. It can be used after adding ajax
 {
     
+}
+
+if(isset($_POST['NextPlayerCanPlay']))
+{
+    //Select the player after me, who can play
+    $query = "SELECT OrderSeat as PlayerAfterMe FROM poker.seat WHERE OrderSeat > '$OrderSeat' AND fkStatusSeat = '2' GROUP BY OrderSeat ASC LIMIT 1";
+    $PlayingAfterMePlayers = $dbh->query($query) or die ("SQL Error in:<br> $query <br>Error message:".$dbh->errorInfo()[2]);
+
+    if($PlayingAfterMePlayers->rowCount() > 0) //Check if there is a player after me
+    {
+        $PlayingAfterMePlayer = $PlayingAfterMePlayers->fetch();
+        extract($PlayingAfterMePlayer); //$PlayerAfterMe
+    }
+    else 
+    {
+        //Select the player after me, but in starting by 0
+        $query = "SELECT OrderSeat as PlayerAfterMe FROM poker.seat WHERE OrderSeat < '$OrderSeat' AND fkStatusSeat = '2' GROUP BY OrderSeat ASC LIMIT 1";
+        $PlayingAfterMePlayers = $dbh->query($query) or die ("SQL Error in:<br> $query <br>Error message:".$dbh->errorInfo()[2]);
+        
+        $PlayingAfterMePlayer = $PlayingAfterMePlayers->fetch();
+        extract($PlayingAfterMePlayer); //$PlayerAfterMe
+    }
+    
+    //Tell to the next player, he can play
+    $query = "UPDATE poker.seat SET fkStatusSeat = '3' WHERE OrderSeat = '$PlayerAfterMe'";
+    $dbh->query($query) or die ("SQL Error in:<br> $query <br>Error message:".$dbh->errorInfo()[2]);
+    
+    header('Location: table.php'); //Prevent to send the form in a loop
 }
 
 // ONLY PHP UP UNTIL NOW
@@ -421,7 +418,9 @@ if(isset($_POST['Raise'])) //The raise is not used for the moment, the refresh d
         }
         ?>
     </body>
-    <script>setInterval(function(){location.reload()},3000);</script> <!-- //Refresh the page. Code gived by my projet manager --> 
+    <?php if($fkStatusSeat != 3){ ?>
+        <script>setInterval(function(){location.reload()},3000);</script> <!-- //Refresh the page. Code gived by my projet manager --> 
+    <?php } ?>
 </html>
 
 <?php
