@@ -35,7 +35,6 @@ CREATE TABLE IF NOT EXISTS Poker.Seat (
   INDEX fk_Seat_Game1_idx (fkGameSeat ASC),
   INDEX fk_Seat_Status1_idx (fkStatusSeat ASC),
   INDEX fk_Seat_Player1_idx (fkPlayerSeat ASC),
-  UNIQUE INDEX OrderSeat_UNIQUE (OrderSeat ASC),
   UNIQUE INDEX fkPlayerSeat_UNIQUE (fkPlayerSeat ASC),
   CONSTRAINT fk_Seat_Game1
     FOREIGN KEY (fkGameSeat)
