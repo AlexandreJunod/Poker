@@ -29,14 +29,6 @@ else //The user isn't logged
 
 //----------------------------- SQL REQUEST ----------------------------------------------
 
-//Gives the number of 1 free seat out of the game
-$query = "SELECT idSeat FROM poker.seat WHERE fkPlayerSeat IS NULL AND fkStatusSeat = '1' ORDER BY fkPlayerSeat ASC LIMIT 1";
-$FreePositions = $dbh->query($query) or die ("SQL Error in:<br> $query <br>Error message:".$dbh->errorInfo()[2]);
-
-//Takes informations about the money, the hand and the order of the player logged
-$query = "SELECT MoneySeat, HandSeat, OrderSeat, BetSeat FROM poker.seat WHERE fkPlayerSeat = (SELECT idPlayer FROM poker.player WHERE PseudoPlayer = '$Pseudo')";
-$MyInfos = $dbh->query($query) or die ("SQL Error in:<br> $query <br>Error message:".$dbh->errorInfo()[2]);
-
 //Takes information about the tables
 $query = "SELECT idGame, PotGame, BoardGame, BlindGame, DealerGame, HourStartGame, (SELECT ValueInt FROM poker.settings WHERE NameSettings = 'TimeToIncreaseBlind') as TimeToIncreaseBlind FROM poker.game";
 $InfoTables = $dbh->query($query) or die ("SQL Error in:<br> $query <br>Error message:".$dbh->errorInfo()[2]);
